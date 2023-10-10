@@ -1,6 +1,8 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
+@import "src/assets/styles/mixins";
+@import "src/assets/styles/fonts";
 
 /* Reset CSS */
 html,
@@ -129,31 +131,19 @@ table {
 }
 
 /* Additional Reset Styles */
+h1,h2,h3,h4,h5,h6,h7 {
+  font-family: 'BowlbyOne', sans-serif;
+}
+p {
+  font-family: 'DM Sans Placeholder', sans-serif;
+}
 body {
-  font-family: Arial, sans-serif; /* Define a default font */
+  font-family: 'DMSans', sans-serif; /* Define a default font */
 }
 
 a {
   text-decoration: none; /* Remove underline from links */
   color: inherit; /* Inherit text color from parent */
-}
-
-
-@mixin hovering-button($background-color, $color, $hover-background-color, $hover-color) {
-  background-color: $background-color;
-  border-color: transparent;
-  color: $color;
-  transition: .3s;
-  &:hover {
-    background-color: $hover-background-color;
-    color: $hover-color;
-  }
-  &:focus {
-    box-shadow: none;
-  }
-  &:focus-visible {
-    box-shadow: none;
-  }
 }
 
 body {
@@ -165,4 +155,23 @@ p-button {
   cursor: pointer;
   .link-button { @include hovering-button(transparent, #ffffff, #ffffff, #111111); }
   .regular-button { @include hovering-button(#ffffff, #111111, #111111, #ffffff); }
+}
+
+.image-container {
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .color-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ff8fa3f7; /* Semi-transparent red overlay */
+    mix-blend-mode: color; /* Blend mode to apply color */
+  }
 }
