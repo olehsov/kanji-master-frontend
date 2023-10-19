@@ -5,6 +5,7 @@ node_modules/
 dist/
 tmp/
 appium_logs/
+.angular/
 
 # Environment variables
 .env

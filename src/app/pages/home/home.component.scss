@@ -1,0 +1,54 @@
+.featured-kanji {
+  margin-bottom: 40px;
+  position: relative;
+  .featured-kanji-content {
+    position: relative;
+    padding: 10px 30px;
+  }
+  .kanji-tables {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 50px;
+    opacity: .7;
+  }
+  .kanji-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    .kanji {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .meaning {
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .readings {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      .reading {
+        font-size: 18px;
+        margin: 5px;
+        padding: 10px;
+        background-color: #f2f2f2;
+        border-radius: 5px;
+      }
+    }
+  }
+}
+
+.about {
+  margin-bottom: 40px;
+  p {
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: justify;
+  }
+}
