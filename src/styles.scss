@@ -1,177 +1,55 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
-@import "src/assets/styles/mixins";
-@import "src/assets/styles/fonts";
 
-/* Reset CSS */
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section,
-summary,
-time,
-mark,
-audio,
-video {
+$section-height: 100px;
+
+body {
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  border: 0;
-  outline: 0;
-  font-size: 100%;
-  vertical-align: baseline;
-  background: transparent;
 }
 
-/* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
+header {
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  height: $section-height
 }
 
-body {
-  line-height: 1;
-}
-
-ol,
-ul {
+nav ul {
   list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
 }
 
-blockquote,
-q {
-  quotes: none;
+nav li {
+  margin-right: 20px;
 }
 
-blockquote:before,
-blockquote:after,
-q:before,
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
+nav a {
+  color: #fff;
+  text-decoration: none;
 }
 
-/* Additional Reset Styles */
-h1,h2,h3,h4,h5,h6,h7 {
-  font-family: 'BowlbyOne', sans-serif;
-}
-p {
-  font-family: 'DM Sans Placeholder', sans-serif;
-}
-body {
-  font-family: 'DMSans', sans-serif; /* Define a default font */
+main {
+  max-width: 80vw;
+  min-height: calc(100vh - 3 * $section-height);
+  padding: 20px;
+  margin: $section-height auto $section-height auto;
 }
 
-a {
-  text-decoration: none; /* Remove underline from links */
-  color: inherit; /* Inherit text color from parent */
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  bottom: 0;
+  width: 100%;
+  height: $section-height;
 }
 
-body {
-  background-color: #FF8FA3;
-}
-
-p-button {
-  -webkit-font-smoothing: none;
-  cursor: pointer;
-  .link-button { @include hovering-button(transparent, #ffffff, #ffffff, #111111); }
-  .regular-button { @include hovering-button(#ffffff, #111111, #111111, #ffffff); }
-}
-
-.image-container {
-  position: relative;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .color-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #ff8fa3f7; /* Semi-transparent red overlay */
-    mix-blend-mode: color; /* Blend mode to apply color */
-  }
-}
