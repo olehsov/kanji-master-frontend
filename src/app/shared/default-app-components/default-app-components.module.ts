@@ -4,6 +4,7 @@ import {TopBarComponent} from "./top-bar/top-bar.component";
 import { FooterComponent } from './footer/footer.component';
 import {CustomSharedModule} from "../custom-shared.module";
 import {PrimeNgSharedModule} from "../prime-ng-shared.module";
+import {RouterLink, RouterLinkActive} from "@angular/router";
 
 
 
@@ -16,10 +17,12 @@ import {PrimeNgSharedModule} from "../prime-ng-shared.module";
     TopBarComponent,
     FooterComponent
   ],
-  imports: [
-    CommonModule,
-    NgOptimizedImage,
-    PrimeNgSharedModule
-  ]
+    imports: [
+        CommonModule,
+        NgOptimizedImage,
+        PrimeNgSharedModule,
+        RouterLink,
+        RouterLinkActive
+    ]
 })
 export class DefaultAppComponentsModule { }

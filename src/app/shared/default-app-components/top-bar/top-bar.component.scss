@@ -1,20 +1,48 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/mixins";
+
 header {
+  background-color: $bar-color;
+  color: #fff;
   position: fixed;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  align-items: center;
   top: 0;
   left: 0;
-  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  height: $section-height;
   width: 100vw;
-  background-color: rgb(17, 17, 17);
-  color: #fff;
-  padding: 10px;
-  z-index: 1000;
+  .logo {
+    position: absolute;
+    height: 80%;
+    width: 10%;
+  }
   nav {
-    p-button {
-      margin: 0 5px
+    margin-left: auto;
+    .page-button {
+      background-color: #ffffff;
+      color: #000000;
+      border: none;
+      margin-right: 20px;
+      &:hover {
+        transition: 0.5s;
+        @include active-link;
+      }
+      &.active-page {
+        @include active-link;
+      }
+      &:focus,&:focus-visible {
+        border: none;
+        outline: none;
+        box-shadow: none;
+      }
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
     }
   }
 }

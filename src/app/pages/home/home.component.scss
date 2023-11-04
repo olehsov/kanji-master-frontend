@@ -1,3 +1,4 @@
+@import "src/assets/styles/variables";
 .featured-kanji {
   margin-bottom: 40px;
   position: relative;
@@ -37,7 +38,7 @@
         font-size: 18px;
         margin: 5px;
         padding: 10px;
-        background-color: #f2f2f2;
+        background-color: $table-color;
         border-radius: 5px;
       }
     }

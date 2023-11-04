@@ -1,0 +1,11 @@
+<section class="kanji-container">
+    <div *ngFor="let ji of (kanjies$ | async) || []" class="kanji-card">{{ji.kanji}}</div>
+    <ng-container *ngIf="loading$ | async">
+        <p-skeleton
+                *ngFor="let skeleton of skeletons"
+                width="100%"
+                height="100%"
+                [ngClass]="'kanji-card'"
+        ></p-skeleton>
+    </ng-container>
+</section>

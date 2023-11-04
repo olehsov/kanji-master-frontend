@@ -4,6 +4,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import {PageModule} from "./pages/page.module";
 import {CustomSharedModule} from "./shared/custom-shared.module";
+import { GraphQLModule } from './graphql.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -13,7 +15,9 @@ import {CustomSharedModule} from "./shared/custom-shared.module";
     BrowserModule,
     AppRoutingModule,
     PageModule,
-    CustomSharedModule
+    CustomSharedModule,
+    GraphQLModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

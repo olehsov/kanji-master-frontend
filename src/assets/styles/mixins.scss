@@ -1,0 +1,5 @@
+@import "variables";
+@mixin active-link {
+  background-color: $bar-color;
+  color: #ffffff;
+}

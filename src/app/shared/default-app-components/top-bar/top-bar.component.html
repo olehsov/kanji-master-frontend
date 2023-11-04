@@ -2,10 +2,14 @@
     <img [ngSrc]="logoPath" height="137" width="300" alt="logo" class="logo">
     <nav>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Flashcards</a></li>
-            <li><a href="#">Quizzes</a></li>
-            <li><a href="#">About</a></li>
+            <button
+                    *ngFor="let item of menuItems"
+                    pButton
+                    [label]="item.label || ''"
+                    [routerLink]="item.routerLink"
+                    class="page-button"
+                    routerLinkActive="active-page"
+            ></button>
         </ul>
     </nav>
 </header>

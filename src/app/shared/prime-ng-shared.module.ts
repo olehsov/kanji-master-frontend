@@ -1,14 +1,17 @@
 import { NgModule } from '@angular/core';
 import {ButtonModule} from "primeng/button";
+import {SkeletonModule} from "primeng/skeleton";
 
 
 
 @NgModule({
     imports: [
-        ButtonModule
+        ButtonModule,
+        SkeletonModule
     ],
     exports: [
-        ButtonModule
+        ButtonModule,
+        SkeletonModule
     ]
 })
 export class PrimeNgSharedModule { }
