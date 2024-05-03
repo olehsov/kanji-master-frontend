@@ -1,29 +1,35 @@
 import {ChangeDetectionStrategy, Component, HostListener, OnInit} from '@angular/core';
-import {BehaviorSubject, EMPTY, finalize, fromEvent, map, Observable, of, ReplaySubject, switchMap} from "rxjs";
+import {BehaviorSubject, EMPTY, map, Observable, switchMap} from "rxjs";
 import {Kanji} from "../../interfaces/kanji";
 import {KanjiService} from "../../services/kanji.service";
 import {Page} from "../../interfaces/page";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
-  selector: 'app-kanji',
-  templateUrl: './kanji.component.html',
-  styleUrls: ['./kanji.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-kanjies',
+  templateUrl: './kanjies.component.html',
+  styleUrls: ['./kanjies.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class KanjiComponent implements OnInit {
+export class KanjiesComponent implements OnInit {
   private readonly batchSize: number;
   private readonly _kanjies$: BehaviorSubject<Page<Kanji> | null>;
   private readonly _loading$: BehaviorSubject<boolean>;
   public readonly loading$: Observable<boolean>;
   public readonly skeletons: number[];
+  public readonly route: ActivatedRoute | null;
   public kanjies$: Observable<Kanji[]> = EMPTY;
 
-  constructor(private readonly kanjiService: KanjiService) {
+  constructor(
+      private readonly kanjiService: KanjiService,
+      private readonly activatedRoute: ActivatedRoute
+  ) {
     this.batchSize = 50;
     this._kanjies$ = new BehaviorSubject<Page<Kanji> | null>(null);
     this._loading$ = new BehaviorSubject<boolean>(false);
     this.loading$ = this._loading$.asObservable();
     this.skeletons = Array.from({ length: 9 }, (_, i) => i);
+    this.route = this.activatedRoute.parent;
   }
 
   public ngOnInit(): void {

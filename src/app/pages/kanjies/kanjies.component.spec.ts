@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KanjiComponent } from './kanji.component';
+import { KanjiesComponent } from './kanjies.component';
 
 describe('KanjiComponent', () => {
-  let component: KanjiComponent;
-  let fixture: ComponentFixture<KanjiComponent>;
+  let component: KanjiesComponent;
+  let fixture: ComponentFixture<KanjiesComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [KanjiComponent]
+      declarations: [KanjiesComponent]
     });
-    fixture = TestBed.createComponent(KanjiComponent);
+    fixture = TestBed.createComponent(KanjiesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

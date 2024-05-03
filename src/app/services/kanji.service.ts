@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {map, Observable, of, switchMap, throwError} from "rxjs";
+import {Observable, of, switchMap, throwError} from "rxjs";
 import {Page} from "../interfaces/page";
 import {Kanji} from "../interfaces/kanji";
 import {Apollo} from "apollo-angular";
-import {KANJI_SHORT_PAGE} from "../queries/kanji.queries";
+import {KANJI_FIND_BY_ID, KANJI_SHORT_PAGE} from "../queries/kanji.queries";
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +17,19 @@ export class KanjiService {
           if (error) {
             throw throwError(() => error)
           }
-          return of(data.getKanjies);
+          return of(data.getKanjis);
         })
     );
   }
+
+    public getKanji(id: number): Observable<Kanji> {
+        return this.apollo.watchQuery({ query: KANJI_FIND_BY_ID, variables: { id } } ).valueChanges.pipe(
+            switchMap(({data, error}) => {
+                if (error) {
+                    throw throwError(() => error)
+                }
+                return of(data.getKanji);
+            })
+        );
+    }
 }

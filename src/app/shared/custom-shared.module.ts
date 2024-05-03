@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { TopBarComponent } from './default-app-components/top-bar/top-bar.component';
-import {DefaultAppComponentsModule} from "./default-app-components/default-app-components.module";
-import {ButtonModule} from "primeng/button";
+import {CommonModule} from '@angular/common';
+import {RouterLink, RouterLinkActive, RouterModule} from "@angular/router";
+import {PrimeNgSharedModule} from "./prime-ng-shared.module";
 
 
 
@@ -10,11 +9,17 @@ import {ButtonModule} from "primeng/button";
     declarations: [],
     imports: [
         CommonModule,
-        DefaultAppComponentsModule
+        RouterModule,
+        RouterLink,
+        RouterLinkActive,
+        PrimeNgSharedModule,
     ],
     exports: [
-        DefaultAppComponentsModule,
-        ButtonModule
+        CommonModule,
+        RouterModule,
+        RouterLink,
+        RouterLinkActive,
+        PrimeNgSharedModule
     ]
 })
 export class CustomSharedModule { }
