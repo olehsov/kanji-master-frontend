@@ -77,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "kanji-master:build:production"
+              "buildTarget": "kanji-master:build:production"
             },
             "development": {
-              "browserTarget": "kanji-master:build:development"
+              "buildTarget": "kanji-master:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "kanji-master:build"
+            "buildTarget": "kanji-master:build"
           }
         },
         "test": {

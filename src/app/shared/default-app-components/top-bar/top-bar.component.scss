@@ -13,6 +13,7 @@ header {
   padding: 20px;
   height: $section-height;
   width: 100vw;
+  z-index: 3000;
   .logo {
     position: absolute;
     height: 80%;

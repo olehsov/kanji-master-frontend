@@ -4,10 +4,12 @@ import {Page} from "../interfaces/page";
 import {Kanji} from "../interfaces/kanji";
 import {PageVariables} from "../variables/page.variables";
 import {FindByIdVariables} from "../variables/find-by-id.variables";
+import {KanjiFilter} from "../interfaces/kanji-filter";
+import {FilteredPageVariables} from "../variables/filtered-page.variables";
 
-export const KANJI_SHORT_PAGE: TypedDocumentNode<{ getKanjis: Page<Kanji> }, PageVariables> = gql`
-    query($page: Int, $size: Int) {
-        getKanjis(page: $page, size: $size) {
+export const KANJI_SHORT_FILTERED_PAGE: TypedDocumentNode<{ getKanjis: Page<Kanji> }, FilteredPageVariables<KanjiFilter | null>> = gql`
+    query($page: Int, $size: Int, $filter: KanjiFilter) {
+        getKanjis(page: $page, size: $size, filter: $filter) {
             content {
               id
               kanji

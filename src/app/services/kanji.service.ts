@@ -3,7 +3,8 @@ import {Observable, of, switchMap, throwError} from "rxjs";
 import {Page} from "../interfaces/page";
 import {Kanji} from "../interfaces/kanji";
 import {Apollo} from "apollo-angular";
-import {KANJI_FIND_BY_ID, KANJI_SHORT_PAGE} from "../queries/kanji.queries";
+import {KANJI_FIND_BY_ID, KANJI_SHORT_FILTERED_PAGE} from "../queries/kanji.queries";
+import {KanjiFilter} from "../interfaces/kanji-filter";
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ import {KANJI_FIND_BY_ID, KANJI_SHORT_PAGE} from "../queries/kanji.queries";
 export class KanjiService {
   constructor(private readonly apollo: Apollo) {}
 
-  public getPage(page: number = 0, size: number = 10): Observable<Page<Kanji>> {
-    return this.apollo.watchQuery({ query: KANJI_SHORT_PAGE, variables: { page, size } } ).valueChanges.pipe(
+  public getPage(page: number = 0, size: number = 10, filter: KanjiFilter | null): Observable<Page<Kanji>> {
+    return this.apollo.watchQuery({ query: KANJI_SHORT_FILTERED_PAGE, variables: { page, size, filter } } ).valueChanges.pipe(
         switchMap(({data, error}) => {
           if (error) {
             throw throwError(() => error)

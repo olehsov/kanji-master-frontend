@@ -36,3 +36,7 @@ footer {
   width: 100%;
   height: $section-height;
 }
+
+p-multiSelect.full-width, p-multiSelect.full-width .p-multiselect {
+  width: 100%;
+}

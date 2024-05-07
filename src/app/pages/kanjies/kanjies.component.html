@@ -1,4 +1,12 @@
 <section class="kanji-container">
+    <p-multiSelect
+            [options]="filterOptions"
+            [group]="true"
+            class="kanji-filter full-width"
+            placeholder="Select Filter Options"
+            scrollHeight="250px"
+            display="chip"
+    ></p-multiSelect>
     <div
             *ngFor="let ji of (kanjies$ | async) || []"
             routerLink="kanji/{{ji.id}}"

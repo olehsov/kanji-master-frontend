@@ -6,6 +6,9 @@ import { KanjiesComponent } from './kanjies/kanjies.component';
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import { KanjiComponent } from './kanji/kanji.component';
 import {CustomSharedModule} from "../shared/custom-shared.module";
+import {ToggleButtonModule} from "primeng/togglebutton";
+import {MultiSelectModule} from "primeng/multiselect";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -16,7 +19,11 @@ import {CustomSharedModule} from "../shared/custom-shared.module";
         CustomSharedModule,
         NgOptimizedImage,
         PrimeNgSharedModule,
-        ScrollingModule
+        ScrollingModule,
+        ToggleButtonModule,
+        MultiSelectModule,
+        ReactiveFormsModule,
+
     ]
 })
 export class PageModule { }
