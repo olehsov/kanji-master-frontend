@@ -1,3 +1,5 @@
+import {IReading} from "./reading.interface";
+
 export interface Kanji {
     id: number;
     kanji: string;
@@ -5,9 +7,9 @@ export interface Kanji {
     strokeCount?: number | null;
     meanings: string[];
     heisigEn?: string | null;
-    kunReadings: string[];
-    onReadings: string[];
-    nameReadings: string[];
+    kunReadings: IReading[];
+    onReadings: IReading[];
+    nameReadings: IReading[];
     jlpt: number;
     unicode: string;
     notes: string[];

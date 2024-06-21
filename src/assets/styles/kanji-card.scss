@@ -6,19 +6,27 @@
     cursor: default;
   }
 }
-.kanji-card {
-  background-color: $table-color;
-  border-radius: 30px;
-  height: 150px;
-  width: 150px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 100px;
-  cursor: pointer;
-  margin: 10px;
-  &:hover {
-    color: $table-color;
-    background-color: #000000;
-    transition: 0.5s;
+.kanji-container {
+  display: flex;
+  .kanji-card {
+    background-color: $table-color;
+    border-radius: 30px;
+    height: 150px;
+    width: 150px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 100px;
+    cursor: pointer;
+    margin: 10px;
+    &:hover {
+      color: $table-color;
+      background-color: #000000;
+      transition: 0.5s;
+    }
+  }
+  .kanji-details {
+    display: flex;
+    gap: 1em;
+    margin-top: 10px;
   }
 }

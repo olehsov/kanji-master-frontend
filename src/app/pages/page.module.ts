@@ -9,6 +9,10 @@ import {CustomSharedModule} from "../shared/custom-shared.module";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {MultiSelectModule} from "primeng/multiselect";
 import {ReactiveFormsModule} from "@angular/forms";
+import {ChipModule} from "primeng/chip";
+import {CardModule} from "primeng/card";
+import {TabViewModule} from "primeng/tabview";
+import {AccordionModule} from "primeng/accordion";
 
 
 
@@ -23,7 +27,6 @@ import {ReactiveFormsModule} from "@angular/forms";
         ToggleButtonModule,
         MultiSelectModule,
         ReactiveFormsModule,
-
     ]
 })
 export class PageModule { }

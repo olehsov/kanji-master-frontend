@@ -6,6 +6,7 @@ import {PageVariables} from "../variables/page.variables";
 import {FindByIdVariables} from "../variables/find-by-id.variables";
 import {KanjiFilter} from "../interfaces/kanji-filter";
 import {FilteredPageVariables} from "../variables/filtered-page.variables";
+import {Word} from "../interfaces/kanji-word.interface";
 
 export const KANJI_SHORT_FILTERED_PAGE: TypedDocumentNode<{ getKanjis: Page<Kanji> }, FilteredPageVariables<KanjiFilter | null>> = gql`
     query($page: Int, $size: Int, $filter: KanjiFilter) {
@@ -30,12 +31,26 @@ export const KANJI_FIND_BY_ID: TypedDocumentNode<{ getKanji: Kanji }, FindByIdVa
         strokeCount
         meanings
         heisigEn
-        kunReadings
-        onReadings
-        nameReadings
+        kunReadings { reading }
+        onReadings { reading }
+        nameReadings { reading }
         jlpt
         unicode
         notes
       }
+    }
+`;
+
+export const WORD_BY_KANJI_PAGE: TypedDocumentNode<{ getWordsByKanji: Page<Word> }, PageVariables & { kanjiId: number}> = gql`
+    query($page: Int, $size: Int, $kanjiId: Int) {
+        getWordsByKanji(page: $page, size: $size, kanjiId: $kanjiId) {
+            content {
+             meanings { glosses }
+             variants { written pronounced priorities }
+            }
+            number
+            last
+            first
+        }
     }
 `;
