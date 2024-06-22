@@ -49,6 +49,10 @@ systemjs.config.js
 
 # TSLint
 tslint.json
+# ESLint
+.eslintrc.json
+# Prittier
+.prettierrc
 
 # IDEs and editors
 .idea

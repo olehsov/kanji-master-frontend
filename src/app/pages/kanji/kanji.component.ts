@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {EMPTY, map, Observable, switchMap, tap} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
 import {Kanji} from "../../interfaces/kanji";
 import {KanjiService} from "../../services/kanji.service";
-import {ActivatedRoute} from "@angular/router";
 import {Meaning, Word} from "../../interfaces/kanji-word.interface";
 import {KanjiWordService} from "../../services/kanji-word.service";
 import {Page} from "../../interfaces/page";

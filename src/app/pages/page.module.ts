@@ -1,23 +1,18 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
-import {HomeComponent} from "./home/home.component";
-import {PrimeNgSharedModule} from "../shared/prime-ng-shared.module";
-import { KanjiesComponent } from './kanjies/kanjies.component';
 import {ScrollingModule} from "@angular/cdk/scrolling";
-import { KanjiComponent } from './kanji/kanji.component';
-import {CustomSharedModule} from "../shared/custom-shared.module";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {MultiSelectModule} from "primeng/multiselect";
 import {ReactiveFormsModule} from "@angular/forms";
-import {ChipModule} from "primeng/chip";
-import {CardModule} from "primeng/card";
-import {TabViewModule} from "primeng/tabview";
-import {AccordionModule} from "primeng/accordion";
-
+import {CustomSharedModule} from "../shared/custom-shared.module";
+import {KanjiComponent} from './kanji/kanji.component';
+import {KanjiesComponent} from './kanjies/kanjies.component';
+import {PrimeNgSharedModule} from "../shared/prime-ng-shared.module";
+import {HomeComponent} from "./home/home.component";
 
 
 @NgModule({
-  declarations: [HomeComponent, KanjiesComponent, KanjiComponent],
+    declarations: [HomeComponent, KanjiesComponent, KanjiComponent],
     imports: [
         CommonModule,
         CustomSharedModule,
@@ -29,4 +24,5 @@ import {AccordionModule} from "primeng/accordion";
         ReactiveFormsModule,
     ]
 })
-export class PageModule { }
+export class PageModule {
+}
