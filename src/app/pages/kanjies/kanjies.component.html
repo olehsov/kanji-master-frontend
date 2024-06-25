@@ -1,26 +1,26 @@
 <section class="kanji-container">
     <p-multiSelect
-            [options]="filterOptions"
             [group]="true"
+            [options]="filterOptions"
             class="kanji-filter full-width"
+            display="chip"
             placeholder="Select Filter Options"
             scrollHeight="250px"
-            display="chip"
     ></p-multiSelect>
     <div
             *ngFor="let ji of (kanjies$ | async) || []"
-            routerLink="kanji/{{ji.id}}"
             [relativeTo]="route"
             class="kanji-card"
+            routerLink="kanji/{{ji.kanji}}"
     >
-        {{ji.kanji}}
+        {{ ji.kanji }}
     </div>
     <ng-container *ngIf="loading$ | async">
         <p-skeleton
                 *ngFor="let _ of skeletons"
-                width="100%"
-                height="100%"
                 [ngClass]="'kanji-card'"
+                height="100%"
+                width="100%"
         ></p-skeleton>
     </ng-container>
 </section>

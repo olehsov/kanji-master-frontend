@@ -1,40 +1,39 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {EMPTY, map, Observable, switchMap, tap} from "rxjs";
+import {EMPTY, Observable, switchMap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {Kanji} from "../../interfaces/kanji";
 import {KanjiService} from "../../services/kanji.service";
-import {Meaning, Word} from "../../interfaces/kanji-word.interface";
+import {Word} from "../../interfaces/kanji-word.interface";
 import {KanjiWordService} from "../../services/kanji-word.service";
 import {Page} from "../../interfaces/page";
+import {KanjiInfo} from "../../model/kanji-info.model";
 
 @Component({
-  selector: 'app-kanji',
-  templateUrl: './kanji.component.html',
-  styleUrls: ['./kanji.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-kanji',
+    templateUrl: './kanji.component.html',
+    styleUrls: ['./kanji.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KanjiComponent {
-  public words$: Observable<Page<Word>> = EMPTY;
-  public readonly kanji$: Observable<Kanji>;
+    public words$: Observable<Page<Word>> = EMPTY;
+    public readonly kanji$: Observable<KanjiInfo>;
 
-  constructor(
-      private readonly kanjiService: KanjiService,
-      private readonly kanjiWordService: KanjiWordService,
-      private readonly activatedRoute: ActivatedRoute
-  ) {
-    this.kanji$ = this.activatedRoute.params.pipe(
-        map(({ id }) => +id),
-        switchMap((id: number) => this.getLoader(id))
-    );
-  }
+    constructor(
+        private readonly kanjiService: KanjiService,
+        private readonly kanjiWordService: KanjiWordService,
+        private readonly activatedRoute: ActivatedRoute
+    ) {
+        this.kanji$ = this.activatedRoute.params.pipe(
+            switchMap(({id}) => this.getLoader(String(id)))
+        );
+    }
 
-  getFirstMeaning(meanings: Meaning[]): string {
-    return meanings.length ? meanings[0].glosses[0] : '';
-  }
+    // getFirstMeaning(meanings: Meaning[]): string {
+    //     return meanings.length ? meanings[0].glosses[0] : '';
+    // }
 
-  private getLoader(id: number): Observable<Kanji> {
-    return this.kanjiService.getKanji(id).pipe(
-        tap(() => this.words$ = this.kanjiWordService.getPage(id))
-    );
-  }
+    private getLoader(kanji: string): Observable<KanjiInfo> {
+        return this.kanjiService.getKanji(kanji).pipe(
+            // tap(() => this.words$ = this.kanjiWordService.getPage(id))
+        );
+    }
 }

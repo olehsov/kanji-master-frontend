@@ -2,47 +2,55 @@
     <div class="kanji-container">
         <p-card class="kanji-card">
             <div class="kanji-header">
-                <h1>{{kanji.kanji}}</h1>
-                <h3>{{kanji.heisigEn}}</h3>
+                <h1>{{ kanji.kanji }}</h1>
+                <h2>{{ kanji.radical }}</h2>
+                <h3>{{ kanji.heisigEn }}</h3>
                 <p>
-                    <span class="badge grade">Grade: {{kanji.grade}}</span>
-                    <span class="badge strokes">Strokes: {{kanji.strokeCount}}</span>
-                    <span class="badge jlpt">JLPT: N{{kanji.jlpt}}</span>
+                    <span
+                            [pTooltip]="kanji.gradeTooltip"
+                            tooltipPosition="top"
+                            tooltipStyleClass="regular-tooltip"
+                            class="badge grade"
+                    >Grade: {{ kanji.gradePrettified }}</span>
+                    <span class="badge strokes">Strokes: {{ kanji.strokes }}</span>
+                    <span
+                            [pTooltip]="kanji.jlptTooltip"
+                            tooltipPosition="top"
+                            tooltipStyleClass="regular-tooltip"
+                            class="badge jlpt"
+                    >JLPT: {{ kanji.jlptPrettified }}</span>
                 </p>
             </div>
 
             <div class="kanji-details">
-                @if (kanji.meanings && kanji.meanings.length) {
+                @if (kanji.meaning && kanji.meaning.split(';').length > 1) {
                     <div class="kanji-section">
                         <h4>Meanings</h4>
                         <ul>
-                            @for (meaning of kanji.meanings; track meaning) {
-                                <li>{{meaning}}</li>
+                            @for (meaning of kanji.meaning.split(';'); track meaning; let first = $first) {
+                                @if (!first) {
+                                    <li>{{ meaning }}</li>
+                                }
                             }
                         </ul>
                     </div>
                 }
-                @if (kanji.kunReadings && kanji.kunReadings.length) {
+                @if (kanji.regularKun) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'Kun Reading', readings: kanji.kunReadings}"
+                            *ngTemplateOutlet="reading; context: { title: 'Kun Reading', readings: kanji.regularKun}"
                     ></ng-container>
                 }
-                @if (kanji.onReadings && kanji.onReadings.length) {
+                @if (kanji.regularOn) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'On Reading', readings: kanji.onReadings}"
-                    ></ng-container>
-                }
-                @if (kanji.nameReadings && kanji.nameReadings.length) {
-                    <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'Name Reading', readings: kanji.nameReadings}"
+                            *ngTemplateOutlet="reading; context: { title: 'On Reading', readings: kanji.regularOn}"
                     ></ng-container>
                 }
                 <ng-template #reading let-title="title" let-readings="readings">
                     <div class="kanji-section">
-                        <h4>{{title}}</h4>
+                        <h4>{{ title }}</h4>
                         <ul>
-                            @for (reading of readings; track reading.id) {
-                                <li>{{reading.reading}}</li>
+                            @for (reading of readings.split('、'); track reading) {
+                                <li>{{ reading }}</li>
                             }
                         </ul>
                     </div>
@@ -50,25 +58,25 @@
             </div>
         </p-card>
 
-        @if (words$ | async; as words) {
-            <div class="words-section">
-                <h2>Related Words</h2>
-                <ul class="word-list">
-                    @for (word of words.content; track word.id) {
-                        <li>
-                            <div class="word-item">
-                                <h3>{{ getFirstMeaning(word.meanings) }}</h3>
-                                <ul class="variant-list">
-                                    <li *ngFor="let variant of word.variants">
-                                        <span class="variant-written">{{ variant.written }}</span>
-                                        <span class="variant-pronounced">({{ variant.pronounced }})</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        }
+        <!--        @if (words$ | async; as words) {-->
+        <!--            <div class="words-section">-->
+        <!--                <h2>Related Words</h2>-->
+        <!--                <ul class="word-list">-->
+        <!--                    @for (word of words.content; track word.id) {-->
+        <!--                        <li>-->
+        <!--                            <div class="word-item">-->
+        <!--                                <h3>{{ getFirstMeaning(word.meanings) }}</h3>-->
+        <!--                                <ul class="variant-list">-->
+        <!--                                    <li *ngFor="let variant of word.variants">-->
+        <!--                                        <span class="variant-written">{{ variant.written }}</span>-->
+        <!--                                        <span class="variant-pronounced">({{ variant.pronounced }})</span>-->
+        <!--                                    </li>-->
+        <!--                                </ul>-->
+        <!--                            </div>-->
+        <!--                        </li>-->
+        <!--                    }-->
+        <!--                </ul>-->
+        <!--            </div>-->
+        <!--        }-->
     </div>
 }
