@@ -10,7 +10,8 @@ const routes: Routes = [
     {path: 'kanji', component: KanjiesComponent},
     {path: 'kanji/:id', component: KanjiComponent},
     {path: 'search-kanji-by-radical', component: SearchKanjiByRadicalsComponent},
-    {path: '', redirectTo: '/home', pathMatch: 'full'}
+    {path: '', redirectTo: '/home', pathMatch: 'full'},
+    {path: 'index.html/home', redirectTo: '/home'}
 ];
 
 @NgModule({
