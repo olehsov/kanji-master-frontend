@@ -1,14 +1,35 @@
-FROM node:latest AS ngbuilder
+# Stage 1: Build the Angular application
+FROM node:latest AS build
+
+# Set the working directory
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+# Install Angular CLI
+RUN npm install -g @angular/cli
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
+
+# Copy the entire project to the working directory
 COPY . .
-#RUN npm run test
+
+# Build the Angular app in production mode
 RUN npm run build
 
+# Stage 2: Serve the Angular application using Nginx
+FROM nginx:alpine
 
-FROM nginx:1.16.0-alpine
-COPY --from=ngbuilder /app/dist/ /usr/share/nginx/html
+COPY --from=build /app/dist/kanji-master/ /usr/share/nginx/html
+COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy custom Nginx configuration file if you have one
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80 to the outside world
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
 
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
