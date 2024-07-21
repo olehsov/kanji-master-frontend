@@ -2,8 +2,12 @@
     <div class="kanji-container">
         <p-card class="kanji-card">
             <div class="kanji-header">
-                <h1>{{ kanji.kanji }}</h1>
-                <h2>{{ kanji.radical }}</h2>
+                <div class="kanji-with-drawing">
+                    <h1>{{ kanji.kanji }}</h1>
+                    @if (kanjiSvgContent$ | async; as kanjiSvgContent) {
+                        <app-kanji-drawing [kanjiSvgContent]="kanjiSvgContent"></app-kanji-drawing>
+                    }
+                </div>
                 <h3>{{ kanji.heisigEn }}</h3>
                 <p>
                     <span
@@ -12,13 +16,16 @@
                             tooltipStyleClass="regular-tooltip"
                             class="badge grade"
                     >Grade: {{ kanji.gradePrettified }}</span>
+                    <span class="badge strokes">Radical: {{ kanji.radical }}</span>
                     <span class="badge strokes">Strokes: {{ kanji.strokes }}</span>
-                    <span
-                            [pTooltip]="kanji.jlptTooltip"
-                            tooltipPosition="top"
-                            tooltipStyleClass="regular-tooltip"
-                            class="badge jlpt"
-                    >JLPT: {{ kanji.jlptPrettified }}</span>
+                    @if (kanji.jlpt) {
+                        <span
+                                [pTooltip]="kanji.jlptTooltip"
+                                tooltipPosition="top"
+                                tooltipStyleClass="regular-tooltip"
+                                class="badge jlpt"
+                        >JLPT: {{ kanji.jlptPrettified }}</span>
+                    }
                 </p>
             </div>
 
@@ -35,14 +42,19 @@
                         </ul>
                     </div>
                 }
-                @if (kanji.regularKun) {
+                @if (kanji.kunyomi) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'Kun Reading', readings: kanji.regularKun}"
+                            *ngTemplateOutlet="reading; context: { title: 'Kun Reading', readings: kanji.kunyomi}"
                     ></ng-container>
                 }
-                @if (kanji.regularOn) {
+                @if (kanji.onyomi) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'On Reading', readings: kanji.regularOn}"
+                            *ngTemplateOutlet="reading; context: { title: 'On Reading', readings: kanji.onyomi}"
+                    ></ng-container>
+                }
+                @if (kanji.nanori) {
+                    <ng-container
+                            *ngTemplateOutlet="reading; context: { title: 'Nanori', readings: kanji.nanori}"
                     ></ng-container>
                 }
                 <ng-template #reading let-title="title" let-readings="readings">
@@ -57,26 +69,5 @@
                 </ng-template>
             </div>
         </p-card>
-
-        <!--        @if (words$ | async; as words) {-->
-        <!--            <div class="words-section">-->
-        <!--                <h2>Related Words</h2>-->
-        <!--                <ul class="word-list">-->
-        <!--                    @for (word of words.content; track word.id) {-->
-        <!--                        <li>-->
-        <!--                            <div class="word-item">-->
-        <!--                                <h3>{{ getFirstMeaning(word.meanings) }}</h3>-->
-        <!--                                <ul class="variant-list">-->
-        <!--                                    <li *ngFor="let variant of word.variants">-->
-        <!--                                        <span class="variant-written">{{ variant.written }}</span>-->
-        <!--                                        <span class="variant-pronounced">({{ variant.pronounced }})</span>-->
-        <!--                                    </li>-->
-        <!--                                </ul>-->
-        <!--                            </div>-->
-        <!--                        </li>-->
-        <!--                    }-->
-        <!--                </ul>-->
-        <!--            </div>-->
-        <!--        }-->
     </div>
 }

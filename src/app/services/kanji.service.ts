@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable, of, switchMap, throwError} from "rxjs";
 import {Apollo} from "apollo-angular";
 import {Page} from "../interfaces/page";
-import {KANJI_FIND_BY_ID, KANJI_SHORT_FILTERED_PAGE} from "../queries/kanji.queries";
+import {KANJI_FIND_BY_ID, KANJI_SHORT_FILTERED_PAGE, KANJIES_BY_RADICALS} from "../queries/kanji.queries";
 import {KanjiInfo} from "../model/kanji-info.model";
 
 @Injectable({
@@ -33,6 +33,17 @@ export class KanjiService {
                     throw throwError(() => error)
                 }
                 return of(KanjiInfo.fromObject(data.getKanji));
+            })
+        );
+    }
+
+    public getKanjiesByRadicals(radicals: string[]): Observable<KanjiInfo[]> {
+        return this.apollo.watchQuery({query: KANJIES_BY_RADICALS, variables: {radicals}}).valueChanges.pipe(
+            switchMap(({data, error}) => {
+                if (error) {
+                    throw throwError(() => error)
+                }
+                return of(data.getKanjiesByRadical);
             })
         );
     }

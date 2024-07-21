@@ -12,6 +12,14 @@
 .kanji-header {
   text-align: center;
   margin-bottom: 2rem;
+
+  .kanji-with-drawing {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+  }
 }
 
 .kanji-header h1 {

@@ -1,0 +1,24 @@
+@if (radicalSearchOptions$ | async; as radicalSearchOptions) {
+    <p-listbox
+            [options]="radicalSearchOptions"
+            [multiple]="true"
+            [formControl]="radicalControl"
+            [style]="{ width: '100%' }"
+            [className]="'radical-table'"
+            optionDisabled="disabled"
+    />
+}
+
+@if (kanjies$ | async; as kanjies) {
+    <section class="kanji-container">
+        @for (kanji of kanjies; track kanji.kanji) {
+            <div
+                    [relativeTo]="route"
+                    class="kanji-card"
+                    routerLink="kanji/{{kanji.kanji}}"
+            >
+                {{ kanji.kanji }}
+            </div>
+        }
+    </section>
+}

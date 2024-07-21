@@ -1,11 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {EMPTY, Observable, switchMap} from "rxjs";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
+import {Observable, switchMap, tap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {KanjiService} from "../../services/kanji.service";
-import {Word} from "../../interfaces/kanji-word.interface";
-import {KanjiWordService} from "../../services/kanji-word.service";
-import {Page} from "../../interfaces/page";
 import {KanjiInfo} from "../../model/kanji-info.model";
+import {KanjiVgService} from "../../services/kanji-vg.service";
 
 @Component({
     selector: 'app-kanji',
@@ -14,26 +12,28 @@ import {KanjiInfo} from "../../model/kanji-info.model";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KanjiComponent {
-    public words$: Observable<Page<Word>> = EMPTY;
     public readonly kanji$: Observable<KanjiInfo>;
+    public readonly kanjiSvgContent$: Observable<string>;
 
     constructor(
         private readonly kanjiService: KanjiService,
-        private readonly kanjiWordService: KanjiWordService,
-        private readonly activatedRoute: ActivatedRoute
+        private readonly activatedRoute: ActivatedRoute,
+        public readonly kanjiVgService: KanjiVgService,
+        private readonly changeDetectorRef: ChangeDetectorRef
     ) {
         this.kanji$ = this.activatedRoute.params.pipe(
-            switchMap(({id}) => this.getLoader(String(id)))
+            switchMap(({id}) => this.getLoader(String(id))),
+        );
+        this.kanjiSvgContent$ = this.activatedRoute.params.pipe(
+            switchMap(({id}) => this.kanjiVgService.getKanjiSvgContent(String(id))),
         );
     }
 
-    // getFirstMeaning(meanings: Meaning[]): string {
-    //     return meanings.length ? meanings[0].glosses[0] : '';
-    // }
-
     private getLoader(kanji: string): Observable<KanjiInfo> {
         return this.kanjiService.getKanji(kanji).pipe(
-            // tap(() => this.words$ = this.kanjiWordService.getPage(id))
+            tap(() => {
+                console.log(document.getElementById('kanji-drawing'));
+            })
         );
     }
 }

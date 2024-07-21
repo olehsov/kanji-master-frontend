@@ -44,3 +44,30 @@ p-multiSelect.full-width, p-multiSelect.full-width .p-multiselect {
 .regular-tooltip {
   font-size: 12px
 }
+
+.radical-table .p-listbox {
+  .p-listbox-list-wrapper {
+    max-height: fit-content !important;
+
+    ul.p-listbox-list {
+      padding: 0.75rem;
+      outline: 0 none;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      gap: 0.1em;
+
+      li {
+        width: fit-content;
+        height: fit-content;
+      }
+    }
+  }
+}
+
+.p-listbox .disabled {
+  color: gray;
+  pointer-events: none;
+  opacity: 0.6;
+}
