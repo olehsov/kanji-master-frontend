@@ -1,0 +1,5 @@
+@if (sentences$ | async; as sentences) {
+    @for (sentence of sentences.content; track sentence.id) {
+        {{ sentence.word }}
+    }
+}
