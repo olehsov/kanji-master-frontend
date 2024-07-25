@@ -1,24 +1,33 @@
-@if (radicalSearchOptions$ | async; as radicalSearchOptions) {
-    <p-listbox
-            [options]="radicalSearchOptions"
-            [multiple]="true"
-            [formControl]="radicalControl"
-            [style]="{ width: '100%' }"
-            [className]="'radical-table'"
-            optionDisabled="disabled"
-    />
-}
+<section class="kanji-container">
+    @if (radicalSearchOptions$ | async; as radicalSearchOptions) {
+        <p-listbox
+                [options]="radicalSearchOptions"
+                [multiple]="true"
+                [formControl]="radicalControl"
+                [style]="{ width: '100%' }"
+                [className]="'radical-table'"
+                optionDisabled="disabled"
+        />
 
-@if (kanjies$ | async; as kanjies) {
-    <section class="kanji-container">
-        @for (kanji of kanjies; track kanji.kanji) {
-            <div
-                    [relativeTo]="route"
-                    class="kanji-card"
-                    routerLink="kanji/{{kanji.kanji}}"
-            >
-                {{ kanji.kanji }}
-            </div>
+        @if (kanjies$ | async; as kanjies) {
+            @for (kanji of kanjies; track kanji.kanji) {
+                <div
+                        [relativeTo]="route"
+                        class="kanji-card"
+                        routerLink="kanji/{{kanji.kanji}}"
+                >
+                    {{ kanji.kanji }}
+                </div>
+            }
+        } @else if (radicalControl.value && radicalControl.value.length) {
+            <p-skeleton
+                    *ngFor="let _ of skeletons"
+                    [ngClass]="'kanji-card'"
+                    height="100%"
+                    width="100%"
+            ></p-skeleton>
         }
-    </section>
-}
+    } @else {
+        <p-skeleton height="500px" width="75vw"></p-skeleton>
+    }
+</section>

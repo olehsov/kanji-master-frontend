@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
-import {debounceTime, EMPTY, map, Observable} from "rxjs";
+import {debounceTime, EMPTY, map, Observable, of} from "rxjs";
 import {SelectItem} from "primeng/api";
 import {IRadicalSearchOption} from "../../interfaces/radical-search-option.interface";
 import {FormControl} from "@angular/forms";
@@ -16,6 +16,7 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class SearchKanjiByRadicalsComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]>;
+    public readonly skeletons: number[];
     public readonly route: ActivatedRoute | null;
     public readonly radicalSearchOptions$: Observable<SelectItem<IRadicalSearchOption | null>[]>;
     public readonly radicalControl: FormControl<IRadicalSearchOption[]>;
@@ -31,6 +32,7 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         }));
         this.kanjies$ = EMPTY;
         this.radicalControl = new FormControl();
+        this.skeletons = Array.from({length: 21}, (_, i) => i);
         this.route = this.activatedRoute.parent;
     }
 
@@ -38,7 +40,9 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         this.radicalControl.valueChanges.pipe(
             debounceTime(1000)
         ).subscribe(options => {
+            console.log(options)
             const radicals: string[] = options.map(option => option.radical);
+            this.kanjies$ = of([]);
             this.kanjies$ = this.kanjiInfoService.getKanjiesByRadicals(radicals);
             this.changeDetectorRef.detectChanges();
         });
