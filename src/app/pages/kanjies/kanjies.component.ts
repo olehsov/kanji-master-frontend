@@ -1,14 +1,13 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, debounceTime, EMPTY, map, Observable, switchMap} from "rxjs";
+import {ChangeDetectionStrategy, Component, HostListener, OnInit} from '@angular/core';
+import {BehaviorSubject, debounceTime, EMPTY, map, Observable, of, switchMap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {SelectItemGroup} from "primeng/api";
-import {MultiSelect, MultiSelectChangeEvent} from "primeng/multiselect";
+import {SelectItem} from "primeng/api";
 import {KanjiService} from "../../services/kanji.service";
 import {Page} from "../../interfaces/page";
-import {KANJI_FILTER_OPTIONS} from "./consts/form-filter.const";
-import {KanjiFilter} from "../../interfaces/kanji-filter";
-import {KanjiFilterSelectedValue} from "./interfaces/kanji-filter-selected-value";
 import {KanjiInfo} from "../../model/kanji-info.model";
+import {GRADE_ITEMS, JLPT_ITEMS} from "./consts/form-filter.const";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {KanjiFilter} from "../../interfaces/kanji-filter";
 
 @Component({
     selector: 'app-kanjies',
@@ -16,39 +15,53 @@ import {KanjiInfo} from "../../model/kanji-info.model";
     styleUrls: ['./kanjies.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class KanjiesComponent implements OnInit, AfterViewInit {
-    @ViewChild(MultiSelect) multiSelect?: MultiSelect;
+export class KanjiesComponent implements OnInit {
+    public kanjies$: Observable<KanjiInfo[]> = EMPTY;
     public readonly loading$: Observable<boolean>;
     public readonly skeletons: number[];
     public readonly route: ActivatedRoute | null;
-    public readonly filterOptions: SelectItemGroup[];
-    public kanjies$: Observable<KanjiInfo[]> = EMPTY;
+    public readonly jlpt: SelectItem<string>[];
+    public readonly grades: SelectItem<string>[];
+    public readonly form: FormGroup;
     private readonly batchSize: number;
-    private readonly _kanjies$: BehaviorSubject<Page<KanjiInfo> | null>;
+    private readonly _kanjies$: BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>;
     private readonly _loading$: BehaviorSubject<boolean>;
-    private filter: KanjiFilter | null;
 
 
     constructor(
         private readonly kanjiService: KanjiService,
-        private readonly activatedRoute: ActivatedRoute
+        private readonly activatedRoute: ActivatedRoute,
+        private readonly fb: FormBuilder
     ) {
-        this.batchSize = 50;
-        this._kanjies$ = new BehaviorSubject<Page<KanjiInfo> | null>(null);
+        this.batchSize = 75;
+        this._kanjies$ = new BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>('init');
         this._loading$ = new BehaviorSubject<boolean>(false);
         this.loading$ = this._loading$.asObservable();
-        this.skeletons = Array.from({length: 9}, (_, i) => i);
+        this.skeletons = Array.from({length: 21}, (_, i) => i);
         this.route = this.activatedRoute.parent;
-        this.filter = null;
-        this.filterOptions = KANJI_FILTER_OPTIONS;
+        this.jlpt = JLPT_ITEMS;
+        this.grades = GRADE_ITEMS;
+        this.form = this.fb.group({
+            jlpt: [[]],
+            grade: [[]],
+            search: ''
+        });
+        this.form.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
+            this._kanjies$.next('reset');
+            this._kanjies$.next('init');
+        })
     }
 
     public ngOnInit(): void {
         this.kanjies$ = this._kanjies$.asObservable().pipe(
             switchMap(page => {
-                if (!page) {
+                if (page === 'reset') {
                     this._loading$.next(true);
-                    return this.kanjiService.getPage(0, this.batchSize).pipe(
+                    return of([]);
+                }
+                if (page === 'init') {
+                    this._loading$.next(true);
+                    return this.kanjiService.getPage(0, this.batchSize, this.getFilter()).pipe(
                         map(newPage => {
                             (this._kanjies$ as any)._value = newPage;
                             this._loading$.next(false);
@@ -57,7 +70,7 @@ export class KanjiesComponent implements OnInit, AfterViewInit {
                     );
                 }
                 this._loading$.next(true);
-                return this.kanjiService.getPage(page.number + 1, this.batchSize).pipe(
+                return this.kanjiService.getPage(page.number + 1, this.batchSize, this.getFilter()).pipe(
                     map(newPage => {
                         const content: KanjiInfo[] = [...page.content, ...newPage.content];
                         (this._kanjies$ as any)._value = {...newPage, content};
@@ -69,17 +82,10 @@ export class KanjiesComponent implements OnInit, AfterViewInit {
         );
     }
 
-    public ngAfterViewInit(): void {
-        if (!this.multiSelect)
-            return
-
-        this.multiSelect.onChange.pipe(debounceTime(1000)).subscribe(this.onFilterChanged.bind(this));
-    }
-
     @HostListener('window:scroll')
     onScroll(): void {
-        const page: Page<KanjiInfo> | null = this._kanjies$.getValue();
-        if (this._loading$.getValue() || !page || page.last) return;
+        const page: Page<KanjiInfo> | 'reset' | 'init' = this._kanjies$.getValue();
+        if (this._loading$.getValue() || page === 'reset' || page === 'init' || page.last) return;
 
         const documentHeight: number = document.documentElement.scrollHeight;
         const threshold = 250;
@@ -89,15 +95,19 @@ export class KanjiesComponent implements OnInit, AfterViewInit {
         }
     }
 
-    onFilterChanged($event: MultiSelectChangeEvent): void {
-        const selected: KanjiFilterSelectedValue[] = $event.value as KanjiFilterSelectedValue[];
-        if (!selected || !selected.length) {
-            this.filter = null;
-            return;
+    private getFilter(): KanjiFilter | null {
+        const {jlpt, grade, search}: {
+            jlpt: SelectItem<string>[],
+            grade: SelectItem<string>[],
+            search: string
+        } = {...this.form.value};
+        if (jlpt.length || grade.length || search) {
+            return {
+                jlpt: jlpt.map(({value}) => value),
+                grade: grade.map(({value}) => value),
+                search
+            }
         }
-        const jlpt: number[] = selected.filter(({type}) => type === 'jlpt').map(({value}) => value);
-        const grade: number[] = selected.filter(({type}) => type === 'grade').map(({value}) => value);
-        this.filter = {jlpt, grade, strokeCount: []};
-        this._kanjies$.next(null)
+        return null;
     }
 }

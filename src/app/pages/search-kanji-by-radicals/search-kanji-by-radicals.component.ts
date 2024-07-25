@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
 import {debounceTime, EMPTY, map, Observable} from "rxjs";
 import {SelectItem} from "primeng/api";
@@ -23,7 +23,8 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
     constructor(
         public readonly activatedRoute: ActivatedRoute,
         private readonly radicalSearchOptionService: RadicalSearchOptionService,
-        private readonly kanjiInfoService: KanjiService
+        private readonly kanjiInfoService: KanjiService,
+        private readonly changeDetectorRef: ChangeDetectorRef
     ) {
         this.radicalSearchOptions$ = this.radicalSearchOptionService.getRadicalSearchOptions().pipe(map(radicals => {
             return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), [] as SelectItem<IRadicalSearchOption | null>[]);
@@ -39,6 +40,7 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         ).subscribe(options => {
             const radicals: string[] = options.map(option => option.radical);
             this.kanjies$ = this.kanjiInfoService.getKanjiesByRadicals(radicals);
+            this.changeDetectorRef.detectChanges();
         });
     }
 

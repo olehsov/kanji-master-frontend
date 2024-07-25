@@ -2,43 +2,54 @@
 @import "src/assets/styles/mixins";
 
 header {
-  background-color: $bar-color;
+  background: linear-gradient(180deg, rgba(51, 51, 51, 0.30), transparent);
   color: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  height: $section-height;
+  height: 100px;
   width: 100vw;
-  z-index: 3000;
+
+
   .logo {
-    position: absolute;
-    height: 80%;
-    width: 10%;
+    height: 100%;
+    width: 157px;
   }
+
   nav {
     margin-left: auto;
+
     .page-button {
-      background-color: #ffffff;
+      background-color: transparent;
       color: #000000;
       border: none;
       margin-right: 20px;
-      &:hover {
+      padding: 0;
+      border-radius: 0;
+
+      &:before {
+        content: "";
+        height: 3px;
+        width: 0;
+        position: absolute;
+        left: 0;
+        top: 90%;
+        background: rgba(0, 0, 0, 50%);
+      }
+
+      &:hover:before, &.active-page:before {
         transition: 0.5s;
-        @include active-link;
+        width: 100%;
       }
-      &.active-page {
-        @include active-link;
-      }
-      &:focus,&:focus-visible {
+
+      &:focus, &:focus-visible {
         border: none;
         outline: none;
         box-shadow: none;
       }
     }
+
     ul {
       list-style: none;
       margin: 0;

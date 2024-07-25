@@ -9,6 +9,8 @@ body {
   font-family: 'DM Sans', sans-serif;
   margin: 0;
   padding: 0;
+  background-color: $background-color;
+  overflow-x: hidden;
 }
 
 a {
@@ -24,7 +26,7 @@ main {
   max-width: 80vw;
   min-height: calc(100vh - 3 * $section-height);
   padding: 20px;
-  margin: $section-height auto $section-height auto;
+  margin: 0 auto $section-height auto;
 }
 
 footer {
@@ -35,10 +37,6 @@ footer {
   bottom: 0;
   width: 100%;
   height: $section-height;
-}
-
-p-multiSelect.full-width, p-multiSelect.full-width .p-multiselect {
-  width: 100%;
 }
 
 .regular-tooltip {
@@ -59,8 +57,10 @@ p-multiSelect.full-width, p-multiSelect.full-width .p-multiselect {
       gap: 0.1em;
 
       li {
-        width: fit-content;
-        height: fit-content;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        place-content: center;
       }
     }
   }
@@ -70,4 +70,9 @@ p-multiSelect.full-width, p-multiSelect.full-width .p-multiselect {
   color: gray;
   pointer-events: none;
   opacity: 0.6;
+}
+
+
+.full-p-dropdown .p-multiselect {
+  width: 100%;
 }

@@ -1,7 +1,7 @@
 export const Jlpt = {
-    JLPT1: 0,
-    JLPT2: 1,
-    JLPT3: 2,
-    JLPT4: 3,
-    JLPT5: 4
+    JLPT1: 'N1 (advanced)',
+    JLPT2: 'N2 (intermediate)',
+    JLPT3: 'N3 (lower intermediate)',
+    JLPT4: 'N4 (basic)',
+    JLPT5: 'N5 (beginner)'
 }

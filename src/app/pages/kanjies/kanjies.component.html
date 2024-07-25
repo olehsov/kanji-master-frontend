@@ -1,12 +1,32 @@
-<section class="kanji-container">
+<div [formGroup]="form" class="kanji-filter">
     <p-multiSelect
-            [group]="true"
-            [options]="filterOptions"
-            class="kanji-filter full-width"
+            [options]="jlpt"
+            [showHeader]="false"
+            appendTo="body"
+            class="full-p-dropdown"
             display="chip"
-            placeholder="Select Filter Options"
-            scrollHeight="250px"
-    ></p-multiSelect>
+            formControlName="jlpt"
+            id="jlpt-label"
+            inputId="jlpt-label"
+            optionLabel="name"
+            placeholder="Select a JLPT"
+    />
+    <p-multiSelect
+            [options]="grades"
+            [showHeader]="false"
+            appendTo="body"
+            class="full-p-dropdown"
+            display="chip"
+            formControlName="grade"
+            id="grade-label"
+            inputId="grade-label"
+            optionLabel="name"
+            placeholder="Select a Grade"
+    />
+    <input formControlName="search" pInputText placeholder="English, Japanese and Romaji">
+</div>
+
+<section class="kanji-container">
     <div
             *ngFor="let ji of (kanjies$ | async) || []"
             [relativeTo]="route"

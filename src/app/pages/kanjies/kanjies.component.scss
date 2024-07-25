@@ -5,7 +5,19 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
-  .kanji-filter {
-    width: 100%;
+}
+
+.kanji-filter {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  p-multiSelect {
+    min-width: 35%;
+    padding-right: 10px;
+  }
+
+  input {
+    width: 100%
   }
 }

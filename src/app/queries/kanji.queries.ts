@@ -6,8 +6,24 @@ import {FindByKanjiVariables} from "../variables/find-by-kanji.variables";
 import {Word} from "../interfaces/kanji-word.interface";
 import {KanjiInfo} from "../model/kanji-info.model";
 import {KanjiesByRadicalsVariables} from "../variables/kanjies-by-radicals.variables";
+import {KanjiFilter} from "../interfaces/kanji-filter";
 
-export const KANJI_SHORT_FILTERED_PAGE: TypedDocumentNode<{ getKanjis: Page<KanjiInfo> }, PageVariables> = gql`
+export const KANJI_SHORT_FILTERED_PAGE: TypedDocumentNode<{ getKanjis: Page<KanjiInfo> }, PageVariables & {
+    filter?: KanjiFilter
+}> = gql`
+    query($page: Int, $size: Int, $filter: KanjiFilter) {
+        getKanjis(page: $page, size: $size, filter: $filter) {
+            content { kanji }
+            number
+            last
+            first
+        }
+    }
+`;
+
+export const KANJI_SHORT_PAGE: TypedDocumentNode<{ getKanjis: Page<KanjiInfo> }, PageVariables & {
+    filter?: KanjiFilter
+}> = gql`
     query($page: Int, $size: Int) {
         getKanjis(page: $page, size: $size) {
             content { kanji }

@@ -6,24 +6,28 @@
     cursor: default;
   }
 }
+
 .kanji-container {
   display: flex;
+
   .kanji-card {
     background-color: $table-color;
     border-radius: 30px;
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
     text-align: center;
     vertical-align: middle;
-    font-size: 100px;
+    font-size: 68px;
     cursor: pointer;
     margin: 10px;
+
     &:hover {
-      color: $table-color;
+      color: $background-color;
       background-color: #000000;
       transition: 0.5s;
     }
   }
+
   .kanji-details {
     display: flex;
     gap: 1em;
