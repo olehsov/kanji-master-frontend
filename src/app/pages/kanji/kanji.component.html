@@ -1,6 +1,6 @@
 @if (kanji$ | async; as kanji) {
     <div class="kanji-container">
-        <p-card class="kanji-card">
+        <div class="kanji-card">
             <div class="kanji-header">
                 <div class="kanji-with-drawing">
                     <h1>{{ kanji.kanji }}</h1>
@@ -9,24 +9,18 @@
                     }
                 </div>
                 <h3>{{ kanji.heisigEn }}</h3>
-                <p>
-                    <span
-                            [pTooltip]="kanji.gradeTooltip"
-                            tooltipPosition="top"
-                            tooltipStyleClass="regular-tooltip"
-                            class="badge grade"
-                    >Grade: {{ kanji.gradePrettified }}</span>
-                    <span class="badge strokes">Radical: {{ kanji.radical }}</span>
-                    <span class="badge strokes">Strokes: {{ kanji.strokes }}</span>
+                <mat-chip-listbox [selectable]="false" [className]="'kanji-attributes'">
+                    <mat-chip-option [matTooltip]="kanji.gradeTooltip" matTooltipPosition="above">
+                        Grade: {{ kanji.gradePrettified }}
+                    </mat-chip-option>
+                    <mat-chip-option>Radical: {{ kanji.radical }}</mat-chip-option>
+                    <mat-chip-option>Strokes: {{ kanji.strokes }}</mat-chip-option>
                     @if (kanji.jlpt) {
-                        <span
-                                [pTooltip]="kanji.jlptTooltip"
-                                tooltipPosition="top"
-                                tooltipStyleClass="regular-tooltip"
-                                class="badge jlpt"
-                        >JLPT: {{ kanji.jlptPrettified }}</span>
+                        <mat-chip-option [matTooltip]="kanji.jlptTooltip" matTooltipPosition="above">
+                            JLPT: {{ kanji.jlptPrettified }}
+                        </mat-chip-option>
                     }
-                </p>
+                </mat-chip-listbox>
             </div>
 
             <div class="kanji-details">
@@ -68,8 +62,8 @@
                     </div>
                 </ng-template>
             </div>
-        </p-card>
+        </div>
     </div>
-
-    <app-sentence-by-kanji [kanji]="kanji.kanji"></app-sentence-by-kanji>
+} @else {
+    <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
 }

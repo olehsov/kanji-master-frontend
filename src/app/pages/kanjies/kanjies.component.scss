@@ -10,11 +10,15 @@
 .kanji-filter {
   display: flex;
   align-items: center;
-  flex-direction: row;
+  flex-direction: column;
+  margin-bottom: 1em;
 
-  p-multiSelect {
-    min-width: 35%;
-    padding-right: 10px;
+  mat-form-field, mat-button-toggle-group, mat-button-toggle {
+    width: 100%;
+  }
+
+  .section-header {
+    margin: 1em 0;
   }
 
   input {

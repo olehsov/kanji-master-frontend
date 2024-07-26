@@ -1,13 +1,14 @@
 import {ChangeDetectionStrategy, Component, HostListener, OnInit} from '@angular/core';
 import {BehaviorSubject, debounceTime, EMPTY, map, Observable, of, switchMap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {SelectItem} from "primeng/api";
 import {KanjiService} from "../../services/kanji.service";
 import {Page} from "../../interfaces/page";
 import {KanjiInfo} from "../../model/kanji-info.model";
 import {GRADE_ITEMS, JLPT_ITEMS} from "./consts/form-filter.const";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {KanjiFilter} from "../../interfaces/kanji-filter";
+import {SelectValue} from "../../interfaces/select-value";
+
 
 @Component({
     selector: 'app-kanjies',
@@ -17,11 +18,11 @@ import {KanjiFilter} from "../../interfaces/kanji-filter";
 })
 export class KanjiesComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]> = EMPTY;
+    public isGradeExpanded: boolean;
     public readonly loading$: Observable<boolean>;
-    public readonly skeletons: number[];
     public readonly route: ActivatedRoute | null;
-    public readonly jlpt: SelectItem<string>[];
-    public readonly grades: SelectItem<string>[];
+    public readonly jlpt: SelectValue<string>[];
+    public readonly grades: string[];
     public readonly form: FormGroup;
     private readonly batchSize: number;
     private readonly _kanjies$: BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>;
@@ -37,7 +38,6 @@ export class KanjiesComponent implements OnInit {
         this._kanjies$ = new BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>('init');
         this._loading$ = new BehaviorSubject<boolean>(false);
         this.loading$ = this._loading$.asObservable();
-        this.skeletons = Array.from({length: 21}, (_, i) => i);
         this.route = this.activatedRoute.parent;
         this.jlpt = JLPT_ITEMS;
         this.grades = GRADE_ITEMS;
@@ -50,6 +50,7 @@ export class KanjiesComponent implements OnInit {
             this._kanjies$.next('reset');
             this._kanjies$.next('init');
         })
+        this.isGradeExpanded = true;
     }
 
     public ngOnInit(): void {
@@ -96,17 +97,9 @@ export class KanjiesComponent implements OnInit {
     }
 
     private getFilter(): KanjiFilter | null {
-        const {jlpt, grade, search}: {
-            jlpt: SelectItem<string>[],
-            grade: SelectItem<string>[],
-            search: string
-        } = {...this.form.value};
-        if (jlpt.length || grade.length || search) {
-            return {
-                jlpt: jlpt.map(({value}) => value),
-                grade: grade.map(({value}) => value),
-                search
-            }
+        const filter: KanjiFilter = {...this.form.value};
+        if (filter.jlpt.length || filter.grade.length || filter.search) {
+            return filter;
         }
         return null;
     }

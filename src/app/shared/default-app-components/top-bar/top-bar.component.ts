@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {MenuItem} from "primeng/api";
 import {environment} from "../../../../environments/environment";
 
 @Component({
@@ -9,16 +8,13 @@ import {environment} from "../../../../environments/environment";
 })
 export class TopBarComponent {
     public readonly logoPath: string;
-    public readonly menuItems: MenuItem[];
+    public readonly menuItems: { label: string, routerLink: string }[];
 
     constructor() {
         this.logoPath = environment.logoPath;
         this.menuItems = [
-            {label: 'Home', routerLink: 'home'},
             {label: 'Kanji', routerLink: 'kanji'},
             {label: 'Find Kanji By Radical', routerLink: 'search-kanji-by-radical'},
-            // { label: 'Quizzes', routerLink: '' },
-            // { label: 'About', routerLink: '' }
         ];
     }
 }

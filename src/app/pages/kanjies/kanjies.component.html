@@ -1,46 +1,35 @@
 <div [formGroup]="form" class="kanji-filter">
-    <p-multiSelect
-            [options]="jlpt"
-            [showHeader]="false"
-            appendTo="body"
-            class="full-p-dropdown"
-            display="chip"
-            formControlName="jlpt"
-            id="jlpt-label"
-            inputId="jlpt-label"
-            optionLabel="name"
-            placeholder="Select a JLPT"
-    />
-    <p-multiSelect
-            [options]="grades"
-            [showHeader]="false"
-            appendTo="body"
-            class="full-p-dropdown"
-            display="chip"
-            formControlName="grade"
-            id="grade-label"
-            inputId="grade-label"
-            optionLabel="name"
-            placeholder="Select a Grade"
-    />
-    <input formControlName="search" pInputText placeholder="English, Japanese and Romaji">
+    <mat-form-field>
+        <mat-label>Japanese and Romaji</mat-label>
+        <input formControlName="search" matInput matNativeControl placeholder="hito or 人">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Grade</mat-label>
+        <mat-select [multiple]="true" formControlName="grade">
+            @for (grade of grades; track grade) {
+                <mat-option [value]="grade">{{ grade }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-label class="section-header">Japanese and Romaji</mat-label>
+
+    <mat-chip-listbox [className]="'kanji-attributes'" [multiple]="true" formControlName="jlpt">
+        @for (jlptOption of jlpt; track jlptOption.value) {
+            <mat-chip-option [value]="jlptOption.label">{{ jlptOption.value }}</mat-chip-option>
+        }
+    </mat-chip-listbox>
 </div>
 
 <section class="kanji-container">
-    <div
-            *ngFor="let ji of (kanjies$ | async) || []"
-            [relativeTo]="route"
-            class="kanji-card"
-            routerLink="kanji/{{ji.kanji}}"
-    >
-        {{ ji.kanji }}
-    </div>
-    <ng-container *ngIf="loading$ | async">
-        <p-skeleton
-                *ngFor="let _ of skeletons"
-                [ngClass]="'kanji-card'"
-                height="100%"
-                width="100%"
-        ></p-skeleton>
-    </ng-container>
+    @for (ji of (kanjies$ | async) || []; track ji.kanji) {
+        <div [relativeTo]="route" class="kanji-card" routerLink="kanji/{{ji.kanji}}">
+            {{ ji.kanji }}
+        </div>
+    }
+
+    @if (loading$ | async) {
+        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+    }
 </section>

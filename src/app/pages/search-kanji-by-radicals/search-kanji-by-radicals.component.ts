@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
 import {debounceTime, EMPTY, map, Observable, of} from "rxjs";
-import {SelectItem} from "primeng/api";
-import {IRadicalSearchOption} from "../../interfaces/radical-search-option.interface";
 import {FormControl} from "@angular/forms";
+import {ActivatedRoute} from "@angular/router";
+import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
+import {IRadicalSearchOption} from "../../interfaces/radical-search-option.interface";
 import {KanjiInfo} from "../../model/kanji-info.model";
 import {KanjiService} from "../../services/kanji.service";
-import {ActivatedRoute} from "@angular/router";
+import {SelectValue} from "../../interfaces/select-value";
 
 @Component({
     selector: 'app-search-kanji-by-radicals',
@@ -18,7 +18,7 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]>;
     public readonly skeletons: number[];
     public readonly route: ActivatedRoute | null;
-    public readonly radicalSearchOptions$: Observable<SelectItem<IRadicalSearchOption | null>[]>;
+    public readonly radicalSearchOptions$: Observable<SelectValue<IRadicalSearchOption | null>[]>;
     public readonly radicalControl: FormControl<IRadicalSearchOption[]>;
 
     constructor(
@@ -28,10 +28,11 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         private readonly changeDetectorRef: ChangeDetectorRef
     ) {
         this.radicalSearchOptions$ = this.radicalSearchOptionService.getRadicalSearchOptions().pipe(map(radicals => {
-            return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), [] as SelectItem<IRadicalSearchOption | null>[]);
+            return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), [] as SelectValue<IRadicalSearchOption | null>[]);
         }));
         this.kanjies$ = EMPTY;
         this.radicalControl = new FormControl();
+        this.radicalControl.patchValue([], {emitEvent: false})
         this.skeletons = Array.from({length: 21}, (_, i) => i);
         this.route = this.activatedRoute.parent;
     }
@@ -49,9 +50,9 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
     }
 
     private buildSelectItems(
-        accumulator: SelectItem<IRadicalSearchOption | null>[],
+        accumulator: SelectValue<IRadicalSearchOption | null>[],
         radical: IRadicalSearchOption
-    ): SelectItem<IRadicalSearchOption | null>[] {
+    ): SelectValue<IRadicalSearchOption | null>[] {
         if (!accumulator.length) {
             return [
                 ...accumulator,
@@ -59,7 +60,7 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
                 {label: radical.radical, value: radical}
             ]
         }
-        const prevItem: SelectItem<IRadicalSearchOption | null> = accumulator[accumulator.length - 1];
+        const prevItem: SelectValue<IRadicalSearchOption | null> = accumulator[accumulator.length - 1];
         if (prevItem.value && prevItem.value?.strokes !== radical.strokes) {
             return [
                 ...accumulator,

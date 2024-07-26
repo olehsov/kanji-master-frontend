@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterLink, RouterLinkActive, RouterModule} from "@angular/router";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {PrimeNgSharedModule} from "./prime-ng-shared.module";
-
+import {MaterialSharedModule} from "./material-shared.module";
+import {CdkListbox, CdkOption} from "@angular/cdk/listbox";
 
 
 @NgModule({
@@ -13,15 +13,20 @@ import {PrimeNgSharedModule} from "./prime-ng-shared.module";
         RouterModule,
         RouterLink,
         RouterLinkActive,
-        PrimeNgSharedModule,
-        BrowserAnimationsModule
+        MaterialSharedModule,
+        BrowserAnimationsModule,
+        CdkListbox,
+        CdkOption
     ],
     exports: [
         CommonModule,
         RouterModule,
         RouterLink,
         RouterLinkActive,
-        PrimeNgSharedModule
+        MaterialSharedModule,
+        CdkListbox,
+        CdkOption
     ]
 })
-export class CustomSharedModule { }
+export class CustomSharedModule {
+}

@@ -2,14 +2,13 @@
 @import "src/assets/styles/mixins";
 
 header {
-  background: linear-gradient(180deg, rgba(51, 51, 51, 0.30), transparent);
+  background: linear-gradient(180deg, rgba(51, 51, 51, 0.3), transparent);
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  height: 100px;
-  width: 100vw;
+  height: 50px;
 
 
   .logo {
@@ -21,12 +20,17 @@ header {
     margin-left: auto;
 
     .page-button {
+      display: block;
       background-color: transparent;
       color: #000000;
       border: none;
       margin-right: 20px;
       padding: 0;
       border-radius: 0;
+
+      &:hover {
+        background-color: transparent;
+      }
 
       &:before {
         content: "";

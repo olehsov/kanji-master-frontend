@@ -1,13 +1,18 @@
 <section class="kanji-container">
     @if (radicalSearchOptions$ | async; as radicalSearchOptions) {
-        <p-listbox
-                [options]="radicalSearchOptions"
-                [multiple]="true"
+        <div class="list-box-container">
+            <mat-icon class="clear-button" (click)="radicalControl.reset()">settings_backup_restore</mat-icon>
+            <ul cdkListbox
+                cdkListboxMultiple
                 [formControl]="radicalControl"
-                [style]="{ width: '100%' }"
-                [className]="'radical-table'"
-                optionDisabled="disabled"
-        />
+                class="list-box">
+                @for (radical of radicalSearchOptions; track radical.value) {
+                    <li [cdkOption]="radical.value" [cdkOptionDisabled]="radical.disabled" class="list-box-option">
+                        <span>{{ radical.label }}</span></li>
+                }
+            </ul>
+        </div>
+
 
         @if (kanjies$ | async; as kanjies) {
             @for (kanji of kanjies; track kanji.kanji) {
@@ -20,14 +25,9 @@
                 </div>
             }
         } @else if (radicalControl.value && radicalControl.value.length) {
-            <p-skeleton
-                    *ngFor="let _ of skeletons"
-                    [ngClass]="'kanji-card'"
-                    height="100%"
-                    width="100%"
-            ></p-skeleton>
+            <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
         }
     } @else {
-        <p-skeleton height="500px" width="75vw"></p-skeleton>
+        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
     }
 </section>

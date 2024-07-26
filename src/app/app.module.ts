@@ -7,6 +7,7 @@ import {PageModule} from "./pages/page.module";
 import {CustomSharedModule} from "./shared/custom-shared.module";
 import { GraphQLModule } from './graphql.module';
 import {DefaultAppComponentsModule} from "./shared/default-app-components/default-app-components.module";
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,9 @@ import {DefaultAppComponentsModule} from "./shared/default-app-components/defaul
     GraphQLModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

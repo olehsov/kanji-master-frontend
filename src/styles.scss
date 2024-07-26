@@ -1,16 +1,12 @@
-@import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.css";
-@import "primeicons/primeicons.css";
 @import "src/assets/styles/mixins.scss";
 @import "src/assets/styles/variables.scss";
 @import "src/assets/styles/fonts.scss";
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
   padding: 0;
   background-color: $background-color;
-  overflow-x: hidden;
 }
 
 a {
@@ -29,50 +25,20 @@ main {
   margin: 0 auto $section-height auto;
 }
 
-footer {
-  background-color: $bar-color;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  bottom: 0;
-  width: 100%;
-  height: $section-height;
-}
-
 .regular-tooltip {
   font-size: 12px
 }
 
-.radical-table .p-listbox {
-  .p-listbox-list-wrapper {
-    max-height: fit-content !important;
+// Updated
+.dropped-background:hover .mat-mdc-button-persistent-ripple::before {
+  opacity: 0 !important;
+}
 
-    ul.p-listbox-list {
-      padding: 0.75rem;
-      outline: 0 none;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
-      gap: 0.1em;
-
-      li {
-        width: 30px;
-        height: 30px;
-        text-align: center;
-        place-content: center;
-      }
-    }
+.kanji-attributes {
+  .mdc-evolution-chip-set__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
   }
-}
-
-.p-listbox .disabled {
-  color: gray;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-
-.full-p-dropdown .p-multiselect {
-  width: 100%;
 }

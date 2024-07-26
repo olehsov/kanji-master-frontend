@@ -1,15 +1,15 @@
 <header>
-    <img [ngSrc]="logoPath" height="137" width="300" alt="logo" class="logo">
+    <img [ngSrc]="logoPath" alt="logo" class="logo" height="137" width="300">
     <nav>
         <ul>
             <button
                     *ngFor="let item of menuItems"
-                    pButton
-                    [label]="item.label || ''"
                     [routerLink]="item.routerLink"
-                    class="page-button"
+                    class="dropped-background page-button"
+                    mat-button
                     routerLinkActive="active-page"
-            ></button>
+            >{{ item.label || '' }}
+            </button>
         </ul>
     </nav>
 </header>
