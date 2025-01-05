@@ -1,6 +1,11 @@
 import {ModelUtil} from "../utils/model.util";
 
 export class KanjiInfo {
+    public readonly gradePrettified: string;
+    public readonly gradeTooltip: string;
+    public readonly jlptPrettified: string;
+    public readonly jlptTooltip: string;
+    public readonly heisigEn: string;
 
     constructor(
         public readonly kanji?: string,
@@ -36,38 +41,19 @@ export class KanjiInfo {
         this.frequency = frequency;
         this.meaning = meaning;
         this.compactMeaning = compactMeaning;
-    }
-
-    public get gradePrettified(): string {
-        if (this.grade)
-            return this.getValueWithoutBrackets(this.grade);
-        return '';
-    }
-
-    public get gradeTooltip(): string {
-        if (this.grade) {
-            return this.getValueFromBrackets(this.grade);
+        if (grade) {
+            this.gradePrettified = this.getValueWithoutBrackets(grade);
+            this.gradeTooltip = this.getValueFromBrackets(grade);
+        } else {
+            this.gradePrettified = this.gradeTooltip = '';
         }
-        return '';
-    }
-
-    public get jlptPrettified(): string {
-        if (this.jlpt)
-            return this.getValueWithoutBrackets(this.jlpt);
-        return '';
-    }
-
-    public get jlptTooltip(): string {
-        if (this.jlpt) {
-            return this.getValueFromBrackets(this.jlpt);
+        if (jlpt) {
+            this.jlptPrettified = this.getValueWithoutBrackets(jlpt);
+            this.jlptTooltip = this.getValueFromBrackets(jlpt);
+        } else {
+            this.jlptPrettified = this.jlptTooltip = '';
         }
-        return '';
-    }
-
-    public get heisigEn(): string {
-        if (this.meaning)
-            return this.meaning.split(';')[0];
-        return '';
+        this.heisigEn = meaning ? meaning.split(';')[0] : '';
     }
 
     public static fromObject(source: KanjiInfo): KanjiInfo {
@@ -80,6 +66,6 @@ export class KanjiInfo {
 
     private getValueFromBrackets(value: string): string {
         const parsedValue: RegExpMatchArray | null = value.match(/\((.*?)\)/);
-        return parsedValue ? parsedValue[0] : '';
+        return parsedValue ? parsedValue[1] : '';
     }
 }

@@ -1,7 +1,7 @@
 <section class="kanji-container">
     @if (radicalSearchOptions$ | async; as radicalSearchOptions) {
         <div class="list-box-container">
-            <mat-icon class="clear-button" (click)="radicalControl.reset()">settings_backup_restore</mat-icon>
+            <mat-icon class="clear-button" (click)="onSettingReset()">settings_backup_restore</mat-icon>
             <ul cdkListbox
                 cdkListboxMultiple
                 [formControl]="radicalControl"

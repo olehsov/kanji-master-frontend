@@ -49,6 +49,11 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         });
     }
 
+    onSettingReset(): void {
+        this.radicalControl.reset();
+        this.kanjies$ = of([])
+    }
+
     private buildSelectItems(
         accumulator: SelectValue<IRadicalSearchOption | null>[],
         radical: IRadicalSearchOption
