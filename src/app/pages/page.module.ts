@@ -9,10 +9,18 @@ import {MaterialSharedModule} from "../shared/material-shared.module";
 import {SearchKanjiByRadicalsComponent} from "./search-kanji-by-radicals/search-kanji-by-radicals.component";
 import {KanjiDrawingComponent} from "./kanji/kanji-drawing/kanji-drawing.component";
 import {SentenceByKanjiComponent} from "./kanji/sentence-by-kanji/sentence-by-kanji.component";
+import {StudyingComponent} from "./studying/studying.component";
 
 
 @NgModule({
-    declarations: [KanjiesComponent, KanjiComponent, SearchKanjiByRadicalsComponent, KanjiDrawingComponent, SentenceByKanjiComponent],
+    declarations: [
+        KanjiesComponent,
+        KanjiComponent,
+        SearchKanjiByRadicalsComponent,
+        StudyingComponent,
+        KanjiDrawingComponent,
+        SentenceByKanjiComponent
+    ],
     imports: [
         CommonModule,
         CustomSharedModule,

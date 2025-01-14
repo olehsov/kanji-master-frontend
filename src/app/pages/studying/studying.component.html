@@ -1,0 +1,17 @@
+<div class="studying-cards">
+    @for (topic of (topics$ | async) || []; track topic.id) {
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>{{ topic.header }}</mat-card-title>
+                <mat-card-subtitle>{{ topic.description }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions align="end">
+                <button mat-button>Learn More</button>
+            </mat-card-actions>
+        </mat-card>
+    }
+
+    @if (loading$ | async) {
+        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+    }
+</div>

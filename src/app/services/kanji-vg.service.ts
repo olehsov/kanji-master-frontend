@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {KANJI_VG_KEYS} from "../shared/const/kanji-vg-keys.const";
 import {EMPTY, map, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {KANJI_VG_KEYS} from "../shared/const/kanji-vg-keys.const";
 
 @Injectable({
     providedIn: 'root'

@@ -14,6 +14,7 @@ export class TopBarComponent {
         this.logoPath = environment.logoPath;
         this.menuItems = [
             {label: 'Kanji', routerLink: 'kanji'},
+            {label: 'Studying', routerLink: 'studying'},
             {label: 'Find Kanji By Radical', routerLink: 'search-kanji-by-radical'},
         ];
     }
