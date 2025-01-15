@@ -10,6 +10,9 @@ import {SearchKanjiByRadicalsComponent} from "./search-kanji-by-radicals/search-
 import {KanjiDrawingComponent} from "./kanji/kanji-drawing/kanji-drawing.component";
 import {SentenceByKanjiComponent} from "./kanji/sentence-by-kanji/sentence-by-kanji.component";
 import {StudyingComponent} from "./studying/studying.component";
+import {GrammarTopicComponent} from "./grammar-topic/grammar-topic.component";
+import {TaskTypeRepresentationPipe} from "../pipes/task-type-representation.pipe";
+import {FilterPipe} from "../pipes/filter.pipe";
 
 
 @NgModule({
@@ -19,7 +22,10 @@ import {StudyingComponent} from "./studying/studying.component";
         SearchKanjiByRadicalsComponent,
         StudyingComponent,
         KanjiDrawingComponent,
-        SentenceByKanjiComponent
+        SentenceByKanjiComponent,
+        GrammarTopicComponent,
+        TaskTypeRepresentationPipe,
+        FilterPipe
     ],
     imports: [
         CommonModule,

@@ -1,0 +1,76 @@
+.grammar-settings {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 1em;
+
+  .setting-values {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+
+    .type-range {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
+  }
+
+  button.setting {
+    align-self: end;
+  }
+
+  button.reset {
+    align-self: center;
+  }
+}
+
+.grammar-topic {
+  h3 {
+    font-size: 1.8em;
+  }
+
+  h5 {
+    font-size: 1em;
+  }
+
+  .grammar-list-wrapping {
+    .example-list {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 100%;
+      gap: 10px;
+
+      .example-item {
+        flex: 1 1 auto;
+        width: calc(100% / 5);
+      }
+    }
+
+    .question-item {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      justify-content: center;
+      margin-top: 1em;
+
+      .question-item-answer {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        button {
+          margin: auto 0 auto 0;
+        }
+
+        .answer {
+          align-self: center;
+        }
+      }
+    }
+  }
+}
