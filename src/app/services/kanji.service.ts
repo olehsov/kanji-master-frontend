@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, switchMap, throwError} from "rxjs";
+import {map, Observable, of, switchMap, throwError} from "rxjs";
 import {Apollo} from "apollo-angular";
 import {Page} from "../interfaces/page";
 import {
@@ -12,12 +12,17 @@ import {KanjiInfo} from "../model/kanji-info.model";
 import {KanjiFilter} from "../interfaces/kanji-filter";
 import {PageVariables} from "../variables/page.variables";
 import {TypedDocumentNode} from "@apollo/client/core";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class KanjiService {
-    constructor(private readonly apollo: Apollo) {
+    private readonly uri: string;
+
+    constructor(private readonly apollo: Apollo, private readonly http: HttpClient) {
+        this.uri = environment.apiUrl;
     }
 
     public getPage(page = 0, size = 10, filter: KanjiFilter | null): Observable<Page<KanjiInfo>> {
@@ -58,5 +63,19 @@ export class KanjiService {
                 return of(data.getKanjiesByRadical);
             })
         );
+    }
+
+    public downloadKanjiPdf(filter: KanjiFilter | null): Observable<void> {
+        return this.http.post(`${this.uri}/pdf/kanji-practice`, filter, {responseType: 'blob'}).pipe(map(blob => {
+            //const blob = new Blob([bytes], {type: 'application/pdf'});
+            const url: string = window.URL.createObjectURL(blob);
+            const a: HTMLAnchorElement = document.createElement('a');
+            a.href = url;
+            a.download = 'kanji_practice.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        }));
     }
 }

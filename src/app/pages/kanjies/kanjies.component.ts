@@ -96,6 +96,12 @@ export class KanjiesComponent implements OnInit {
         }
     }
 
+    downloadDpf(): void {
+        const filter: KanjiFilter | null = this.getFilter();
+        this.kanjiService.downloadKanjiPdf(filter).subscribe(() => {
+        });
+    }
+
     private getFilter(): KanjiFilter | null {
         const filter: KanjiFilter = {...this.form.value};
         if (filter.jlpt.length || filter.grade.length || filter.search) {
