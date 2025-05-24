@@ -11,10 +11,10 @@
                 <h3>{{ kanji.heisigEn }}</h3>
                 <mat-chip-listbox [selectable]="false" [className]="'kanji-attributes'">
                     <mat-chip-option [matTooltip]="kanji.gradeTooltip" matTooltipPosition="above">
-                        Grade: {{ kanji.gradePrettified }}
+                        Рівень: {{ kanji.gradePrettified }}
                     </mat-chip-option>
-                    <mat-chip-option>Radical: {{ kanji.radical }}</mat-chip-option>
-                    <mat-chip-option>Strokes: {{ kanji.strokes }}</mat-chip-option>
+                    <mat-chip-option>Радикал: {{ kanji.radical }}</mat-chip-option>
+                    <mat-chip-option>Лінії: {{ kanji.strokes }}</mat-chip-option>
                     @if (kanji.jlpt) {
                         <mat-chip-option [matTooltip]="kanji.jlptTooltip" matTooltipPosition="above">
                             JLPT: {{ kanji.jlptPrettified }}
@@ -26,7 +26,7 @@
             <div class="kanji-details">
                 @if (kanji.meaning && kanji.meaning.split(';').length > 1) {
                     <div class="kanji-section">
-                        <h4>Meanings</h4>
+                        <h4>Значення</h4>
                         <ul>
                             @for (meaning of kanji.meaning.split(';'); track meaning; let first = $first) {
                                 @if (!first) {
@@ -38,17 +38,17 @@
                 }
                 @if (kanji.kunyomi) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'Kun Reading', readings: kanji.kunyomi}"
+                            *ngTemplateOutlet="reading; context: { title: 'Кун Читання', readings: kanji.kunyomi}"
                     ></ng-container>
                 }
                 @if (kanji.onyomi) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'On Reading', readings: kanji.onyomi}"
+                            *ngTemplateOutlet="reading; context: { title: 'Он Читання', readings: kanji.onyomi}"
                     ></ng-container>
                 }
                 @if (kanji.nanori) {
                     <ng-container
-                            *ngTemplateOutlet="reading; context: { title: 'Nanori', readings: kanji.nanori}"
+                            *ngTemplateOutlet="reading; context: { title: 'Наорі', readings: kanji.nanori}"
                     ></ng-container>
                 }
                 <ng-template #reading let-title="title" let-readings="readings">
