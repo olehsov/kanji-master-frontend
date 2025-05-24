@@ -13,9 +13,9 @@ export class TopBarComponent {
     constructor() {
         this.logoPath = environment.logoPath;
         this.menuItems = [
-            {label: 'Канзі', routerLink: 'kanji'},
+            {label: 'Канджі', routerLink: 'kanji'},
             {label: 'Навчання', routerLink: 'studying'},
-            {label: 'Знайти Канзі по Радикалу', routerLink: 'search-kanji-by-radical'},
+            {label: 'Знайти Канджі по Радикалу', routerLink: 'search-kanji-by-radical'},
         ];
     }
 }
