@@ -2,11 +2,16 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@an
 import {debounceTime, EMPTY, map, Observable, of} from "rxjs";
 import {FormControl} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
+import {KeyValue} from "@angular/common";
 import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
 import {IRadicalSearchOption} from "../../interfaces/radical-search-option.interface";
 import {KanjiInfo} from "../../model/kanji-info.model";
 import {KanjiService} from "../../services/kanji.service";
 import {SelectValue} from "../../interfaces/select-value";
+
+interface GroupedRadicalsSearchOptions {
+    [key: number]: SelectValue<IRadicalSearchOption | null>[];
+}
 
 @Component({
     selector: 'app-search-kanji-by-radicals',
@@ -18,7 +23,7 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]>;
     public readonly skeletons: number[];
     public readonly route: ActivatedRoute | null;
-    public readonly radicalSearchOptions$: Observable<SelectValue<IRadicalSearchOption | null>[]>;
+    public readonly radicalSearchOptions$: Observable<GroupedRadicalsSearchOptions>;
     public readonly radicalControl: FormControl<IRadicalSearchOption[]>;
 
     constructor(
@@ -28,7 +33,8 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         private readonly changeDetectorRef: ChangeDetectorRef
     ) {
         this.radicalSearchOptions$ = this.radicalSearchOptionService.getRadicalSearchOptions().pipe(map(radicals => {
-            return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), [] as SelectValue<IRadicalSearchOption | null>[]);
+            console.log(radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), {}))
+            return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), {});
         }));
         this.kanjies$ = EMPTY;
         this.radicalControl = new FormControl();
@@ -54,25 +60,21 @@ export class SearchKanjiByRadicalsComponent implements OnInit {
         this.kanjies$ = of([])
     }
 
+    public sortNumericKeys(a: KeyValue<string, any>, b: KeyValue<string, any>): number {
+        return Number(a.key) - Number(b.key);
+    }
+
     private buildSelectItems(
-        accumulator: SelectValue<IRadicalSearchOption | null>[],
+        accumulator: GroupedRadicalsSearchOptions,
         radical: IRadicalSearchOption
-    ): SelectValue<IRadicalSearchOption | null>[] {
-        if (!accumulator.length) {
-            return [
-                ...accumulator,
-                {label: '1', value: null, disabled: true},
-                {label: radical.radical, value: radical}
-            ]
+    ): GroupedRadicalsSearchOptions {
+        const stroke: number = radical.strokes;
+
+        if (accumulator[stroke]) {
+            accumulator[stroke].push({label: radical.radical, value: radical});
+        } else {
+            accumulator[stroke] = [{label: radical.radical, value: radical}];
         }
-        const prevItem: SelectValue<IRadicalSearchOption | null> = accumulator[accumulator.length - 1];
-        if (prevItem.value && prevItem.value?.strokes !== radical.strokes) {
-            return [
-                ...accumulator,
-                {label: String(radical.strokes), value: null, disabled: true},
-                {label: radical.radical, value: radical}
-            ];
-        }
-        return [...accumulator, {label: radical.radical, value: radical}];
+        return accumulator;
     }
 }

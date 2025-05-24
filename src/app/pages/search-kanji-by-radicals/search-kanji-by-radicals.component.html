@@ -6,9 +6,16 @@
                 cdkListboxMultiple
                 [formControl]="radicalControl"
                 class="list-box">
-                @for (radical of radicalSearchOptions; track radical.value) {
-                    <li [cdkOption]="radical.value" [cdkOptionDisabled]="radical.disabled" class="list-box-option">
-                        <span>{{ radical.label }}</span></li>
+                @for (keyValue of (radicalSearchOptions | keyvalue : sortNumericKeys); track keyValue) {
+                    <div class="stroke-list-box">
+                        <li class="list-box-option stroke-count" aria-disabled="true"><span>{{ keyValue.key }}</span>
+                        </li>
+                        @for (radical of keyValue.value; track radical.value) {
+                            <li [cdkOption]="radical.value" [cdkOptionDisabled]="radical.disabled"
+                                class="list-box-option">
+                                <span>{{ radical.label }}</span></li>
+                        }
+                    </div>
                 }
             </ul>
         </div>
