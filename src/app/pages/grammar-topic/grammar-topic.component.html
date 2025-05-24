@@ -19,12 +19,13 @@
                         </mat-slider>
                         <mat-slide-toggle color="primary" [checked]="form.controls[type].enabled"
                                           (change)="onToggleChanged($event, type)">
-                            Enable {{ type | taskTypeRepresentation }}
+                            Ввімкнути {{ type | taskTypeRepresentation }}
                         </mat-slide-toggle>
                     </div>
                 }
             </div>
-            <button (click)="resetGrammars()" class="reset" color="primary" mat-raised-button>Reset Grammars</button>
+            <button (click)="resetGrammars()" class="reset" color="primary" mat-raised-button>Застосувати Фільтри
+            </button>
         }
     </div>
     <div class="grammar-topic">
@@ -51,8 +52,8 @@
                                 <mat-list-item>
                                     <div class="question-item-answer">
                                         <mat-form-field floatLabel="always">
-                                            <mat-label style="display: none;">Input answer</mat-label>
-                                            <input [disabled]="isChecked.checked" #input placeholder="Input answer"
+                                            <mat-label style="display: none;">Впишіть відповідь</mat-label>
+                                            <input [disabled]="isChecked.checked" #input placeholder="Впишіть відповідь"
                                                    matInput>
                                         </mat-form-field>
                                         <input #isChecked style="display: none">
@@ -81,6 +82,6 @@
 }
 
 @if (loading$ | async) {
-    <h5>Please wait a bit we are collection data to prepare tasks</h5>
+    <h5>Зачекайте трохи, ми збираємо данні для того щоб приготувати завдання</h5>
     <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
 }
