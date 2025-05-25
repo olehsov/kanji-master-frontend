@@ -47,24 +47,30 @@ export const KANJIES_BY_RADICALS: TypedDocumentNode<{
 
 export const KANJI_FIND_BY_ID: TypedDocumentNode<{ getKanji: KanjiInfo }, FindByKanjiVariables> = gql`
     query($kanji: String) {
-      getKanji(kanji: $kanji) {
-        kanji
-        radical
-        radvar
-        type
-        regularOn
-        regularKun
-        onyomi
-        kunyomi
-        nanori
-        strokes
-        grade
-        jlpt
-        kanken
-        frequency
-        meaning
-        compactMeaning
-      }
+        getKanji(kanji: $kanji) {
+            kanji
+            radical
+            radvar
+            type
+            regularOn
+            regularKun
+            onyomi
+            kunyomi
+            nanori
+            strokes
+            grade
+            jlpt
+            kanken
+            frequency
+            meaning
+            compactMeaning
+            words {
+                word
+                yomiDisplay
+                romajiDisplay
+                translation
+            }
+        }
     }
 `;
 
@@ -74,8 +80,8 @@ export const WORD_BY_KANJI_PAGE: TypedDocumentNode<{ getWordsByKanji: Page<Word>
     query($page: Int, $size: Int, $kanjiId: Int) {
         getWordsByKanji(page: $page, size: $size, kanjiId: $kanjiId) {
             content {
-             meanings { glosses }
-             variants { written pronounced priorities }
+                meanings { glosses }
+                variants { written pronounced priorities }
             }
             number
             last

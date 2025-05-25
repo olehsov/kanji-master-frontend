@@ -49,6 +49,11 @@
   min-width: 300px;
 }
 
+.kanji-section.full-width {
+  flex: 1 1 100%;
+  min-width: 100%;
+}
+
 .kanji-section h4 {
   border-bottom: 1px solid #ccc;
   padding-bottom: 0.5rem;

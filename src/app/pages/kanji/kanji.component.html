@@ -51,6 +51,17 @@
                             *ngTemplateOutlet="reading; context: { title: 'Наорі', readings: kanji.nanori}"
                     ></ng-container>
                 }
+                @if (kanji.getShortWordList()) {
+                    <div class="kanji-section full-width">
+                        <h4>Приклади слів</h4>
+                        <ul>
+                            @for (word of kanji.getShortWordList(); track word.word) {
+                                <li>{{ word.word }}<small>({{ word.yomiDisplay }})</small> {{ word.translation }}
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
                 <ng-template #reading let-title="title" let-readings="readings">
                     <div class="kanji-section">
                         <h4>{{ title }}</h4>

@@ -1,4 +1,5 @@
 import {ModelUtil} from "../utils/model.util";
+import {Word} from "../interfaces/word.interface";
 
 export class KanjiInfo {
     public readonly gradePrettified: string;
@@ -23,7 +24,8 @@ export class KanjiInfo {
         public readonly kanken?: string,
         public readonly frequency?: number,
         public readonly meaning?: string,
-        public readonly compactMeaning?: string
+        public readonly compactMeaning?: string,
+        public readonly words?: Word[]
     ) {
         this.kanji = kanji;
         this.radical = radical;
@@ -41,6 +43,7 @@ export class KanjiInfo {
         this.frequency = frequency;
         this.meaning = meaning;
         this.compactMeaning = compactMeaning;
+        this.words = words;
         if (grade) {
             this.gradePrettified = this.getValueWithoutBrackets(grade);
             this.gradeTooltip = this.getValueFromBrackets(grade);
@@ -58,6 +61,13 @@ export class KanjiInfo {
 
     public static fromObject(source: KanjiInfo): KanjiInfo {
         return ModelUtil.fromObject(source, KanjiInfo);
+    }
+
+    public getShortWordList(): Word[] {
+        if (this.words) {
+            return this.words.filter(word => word.word !== this.kanji).slice(0, 5);
+        }
+        return [];
     }
 
     private getValueWithoutBrackets(value: string): string {
