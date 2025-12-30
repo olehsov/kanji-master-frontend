@@ -1,0 +1,37 @@
+<div class="video-preview-grid">
+    <div class="youtube-player" id="youtube-player"></div>
+    <div
+            [ngStyle]="{ '--preview-url': 'url(https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg)' }"
+            class="subtitle-area"
+    >
+        @if (youtubePlayer) {
+            @for (subtitleLine of subtitles; track subtitleLine) {
+                <div class="subtitle-item">
+                    <span
+                            class="subtitle-text"
+                            [attr.data-subtitle-runtime-status]="currentTime | subtitleRuntimeStatus : subtitleLine"
+                    >
+                        @for (subtitleSplit of subtitleLine | subtitleLineSplit; track subtitleSplit) {
+                            @if (subtitleSplit.subtitle; as subtitle) {
+                                <span
+                                        class="subtitle-split"
+                                        [matTooltip]="(subtitle.meaning | titlecase) + ' (' + subtitle.jlpt + ')'"
+                                        matTooltipPosition="above"
+                                >
+                                    <span class="sup-hiragana">{{ subtitle.textHiragana }}</span>
+                                    {{ subtitle.text }}
+                                </span>
+                            } @else {
+                                {{ subtitleSplit.text }}
+                            }
+
+                        }
+                    </span>
+                </div>
+            }
+        }
+        @if (loading$ | async) {
+            <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+        }
+    </div>
+</div>

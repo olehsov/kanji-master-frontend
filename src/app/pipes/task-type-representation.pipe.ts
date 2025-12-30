@@ -13,5 +13,4 @@ export class TaskTypeRepresentationPipe implements PipeTransform {
             return 'Заповнити пропуски';
         return '';
     }
-
 }

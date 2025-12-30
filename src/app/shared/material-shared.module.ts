@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
 import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-toggle";
-import {MatOption, MatSelect} from "@angular/material/select";
+import {MatOption, MatSelect, MatSelectModule} from "@angular/material/select";
 import {MatProgressBar} from "@angular/material/progress-bar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatChipsModule} from "@angular/material/chips";
@@ -12,6 +12,8 @@ import {MatListModule} from "@angular/material/list";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatSliderModule} from "@angular/material/slider";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatGridListModule} from "@angular/material/grid-list";
 
 
 @NgModule({
@@ -33,7 +35,10 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
         MatListModule,
         MatTabsModule,
         MatSliderModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatGridListModule
     ],
     exports: [
         MatButtonModule,
@@ -53,7 +58,10 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
         MatListModule,
         MatTabsModule,
         MatSliderModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatGridListModule
     ]
 })
 export class MaterialSharedModule {

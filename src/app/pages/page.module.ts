@@ -13,6 +13,20 @@ import {StudyingComponent} from "./studying/studying.component";
 import {GrammarTopicComponent} from "./grammar-topic/grammar-topic.component";
 import {TaskTypeRepresentationPipe} from "../pipes/task-type-representation.pipe";
 import {FilterPipe} from "../pipes/filter.pipe";
+import {SubtitleStudyComponent} from "./subtitle-study/subtitle-study.component";
+import {SubtitleMediaTypePipe} from "../pipes/subtitle-media-type.pipe";
+import {
+    YoutubeVideoPreviewComponent
+} from "./subtitle-study/video-preview/youtube-video-preview/youtube-video-preview.component";
+import {
+    UploadedVideoPreviewComponent
+} from "./subtitle-study/video-preview/uploaded-video-preview/uploaded-video-preview.component";
+import {
+    SpotifyAudioPreviewComponent
+} from "./subtitle-study/video-preview/spotify-audio-preview/spotify-audio-preview.component";
+import {SafePipe} from "../pipes/safe.pipe";
+import {SubtitleRuntimeStatusPipe} from "../pipes/subtitle-runtime-status.pipe";
+import {SubtitleLineSplitPipe} from "../pipes/subtitle-line-split.pipe";
 
 
 @NgModule({
@@ -24,8 +38,16 @@ import {FilterPipe} from "../pipes/filter.pipe";
         KanjiDrawingComponent,
         SentenceByKanjiComponent,
         GrammarTopicComponent,
+        SubtitleStudyComponent,
+        YoutubeVideoPreviewComponent,
+        UploadedVideoPreviewComponent,
+        SpotifyAudioPreviewComponent,
+        SafePipe,
         TaskTypeRepresentationPipe,
-        FilterPipe
+        SubtitleMediaTypePipe,
+        FilterPipe,
+        SubtitleRuntimeStatusPipe,
+        SubtitleLineSplitPipe
     ],
     imports: [
         CommonModule,

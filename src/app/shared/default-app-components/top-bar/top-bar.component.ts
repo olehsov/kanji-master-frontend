@@ -15,6 +15,7 @@ export class TopBarComponent {
         this.menuItems = [
             {label: 'Канджі', routerLink: 'kanji'},
             {label: 'Навчання', routerLink: 'studying'},
+            {label: 'Навчання по субтитрах', routerLink: 'subtitle-study'},
             {label: 'Знайти Канджі по Радикалу', routerLink: 'search-kanji-by-radical'},
         ];
     }

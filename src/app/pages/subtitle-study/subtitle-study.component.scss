@@ -1,0 +1,38 @@
+$icon-path: '/assets/images';
+$icons: spotify, youtube, upload;
+
+.video-input-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 1em;
+
+  .url-field-input {
+    min-width: 70%;
+  }
+}
+
+mat-form-field, mat-button-toggle-group, mat-button-toggle {
+  width: 100%;
+}
+
+.select-media-type {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 1em;
+
+  i.select-media-type-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    @each $icon in $icons {
+      &[data-icon="#{$icon}"] {
+        background-image: url('#{$icon-path}/#{$icon}.png');
+      }
+    }
+  }
+}
