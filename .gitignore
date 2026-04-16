@@ -62,3 +62,5 @@ tslint.json
 *.njsproj
 *.sln
 *.sw?
+
+src/.DS_Store
