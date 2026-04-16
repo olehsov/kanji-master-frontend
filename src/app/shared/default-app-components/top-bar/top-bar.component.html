@@ -1,15 +1,17 @@
 <header>
-    <img [ngSrc]="logoPath" alt="logo" class="logo" height="137" width="300">
-    <nav>
-        <ul>
-            <button
-                    *ngFor="let item of menuItems"
-                    [routerLink]="item.routerLink"
-                    class="dropped-background page-button"
-                    mat-button
-                    routerLinkActive="active-page"
-            >{{ item.label || '' }}
-            </button>
-        </ul>
-    </nav>
+  <img [ngSrc]="logoPath" alt="logo" class="logo" height="137" width="300" />
+  <nav>
+    <ul>
+      @for (item of menuItems; track item) {
+        <button
+          [routerLink]="item.routerLink"
+          class="dropped-background page-button"
+          mat-button
+          routerLinkActive="active-page"
+        >
+          {{ item.label || '' }}
+        </button>
+      }
+    </ul>
+  </nav>
 </header>
