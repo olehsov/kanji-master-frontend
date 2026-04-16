@@ -1,7 +1,10 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {TaskType} from "../interfaces/grammar-topic.interface";
 
-@Pipe({name: 'taskTypeRepresentation'})
+@Pipe({
+    name: 'taskTypeRepresentation',
+    standalone: false
+})
 export class TaskTypeRepresentationPipe implements PipeTransform {
 
     transform(value: TaskType): string {

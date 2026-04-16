@@ -2,7 +2,10 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {IVideoSubtitleDto} from "../interfaces/video-subtitle-dto.interface";
 import {IIndividualSubtitleTranslationDto} from "../interfaces/Iidividual-subtitle-translation-dto.interface";
 
-@Pipe({name: 'subtitleLineSplit'})
+@Pipe({
+    name: 'subtitleLineSplit',
+    standalone: false
+})
 export class SubtitleLineSplitPipe implements PipeTransform {
 
     transform(subtitle: IVideoSubtitleDto): { subtitle: IIndividualSubtitleTranslationDto, text: string }[] {

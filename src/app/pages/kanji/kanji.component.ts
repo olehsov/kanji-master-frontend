@@ -9,7 +9,8 @@ import {KanjiVgService} from "../../services/kanji-vg.service";
     selector: 'app-kanji',
     templateUrl: './kanji.component.html',
     styleUrls: ['./kanji.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class KanjiComponent {
     public readonly kanji$: Observable<KanjiInfo>;

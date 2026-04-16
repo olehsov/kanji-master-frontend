@@ -1,7 +1,10 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {SubtitleMediaType} from "../pages/subtitle-study/enum/subtitle-media-type.enum";
 
-@Pipe({name: 'subtitleMediaType'})
+@Pipe({
+    name: 'subtitleMediaType',
+    standalone: false
+})
 export class SubtitleMediaTypePipe implements PipeTransform {
 
     transform(value: SubtitleMediaType): string {

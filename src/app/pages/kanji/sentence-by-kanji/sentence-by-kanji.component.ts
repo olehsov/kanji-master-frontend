@@ -7,7 +7,8 @@ import {SentenceService} from "../../../services/sentence.service";
 @Component({
     selector: 'app-sentence-by-kanji',
     templateUrl: './sentence-by-kanji.component.html',
-    styleUrl: './sentence-by-kanji.component.scss'
+    styleUrl: './sentence-by-kanji.component.scss',
+    standalone: false
 })
 export class SentenceByKanjiComponent {
     public sentences$: Observable<Page<ISentence>> = EMPTY;

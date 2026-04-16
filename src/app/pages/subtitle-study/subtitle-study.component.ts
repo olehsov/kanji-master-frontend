@@ -7,7 +7,8 @@ import {SPOTIFY_REGEXP, YOUTUBE_REGEXP} from "../../shared/const/regexp.const";
     selector: 'app-subtitle-study',
     templateUrl: './subtitle-study.component.html',
     styleUrl: './subtitle-study.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SubtitleStudyComponent {
     public readonly mediaTypes: typeof SubtitleMediaType;

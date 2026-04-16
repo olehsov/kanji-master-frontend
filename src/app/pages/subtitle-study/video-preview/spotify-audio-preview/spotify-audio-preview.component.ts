@@ -12,7 +12,8 @@ declare global {
 @Component({
     selector: 'app-spotify-audio-preview',
     templateUrl: './spotify-audio-preview.component.html',
-    styleUrl: './spotify-audio-preview.component.scss'
+    styleUrl: './spotify-audio-preview.component.scss',
+    standalone: false
 })
 export class SpotifyAudioPreviewComponent implements OnChanges {
     @Input() url: string | null = null;

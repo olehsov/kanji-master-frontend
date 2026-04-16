@@ -2,7 +2,10 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {IVideoSubtitleDto} from "../interfaces/video-subtitle-dto.interface";
 import {SubtitleRuntimeStatus} from "../enum/subtitle-runtime-status.enum";
 
-@Pipe({name: 'subtitleRuntimeStatus'})
+@Pipe({
+    name: 'subtitleRuntimeStatus',
+    standalone: false
+})
 export class SubtitleRuntimeStatusPipe implements PipeTransform {
 
     transform(timing: number | null, subtitle: IVideoSubtitleDto): SubtitleRuntimeStatus {

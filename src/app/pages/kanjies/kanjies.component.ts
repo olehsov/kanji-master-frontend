@@ -14,7 +14,8 @@ import {SelectValue} from "../../interfaces/select-value";
     selector: 'app-kanjies',
     templateUrl: './kanjies.component.html',
     styleUrls: ['./kanjies.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class KanjiesComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]> = EMPTY;

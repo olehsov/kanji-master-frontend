@@ -17,7 +17,8 @@ interface GroupedRadicalsSearchOptions {
     selector: 'app-search-kanji-by-radicals',
     templateUrl: './search-kanji-by-radicals.component.html',
     styleUrl: './search-kanji-by-radicals.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SearchKanjiByRadicalsComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]>;

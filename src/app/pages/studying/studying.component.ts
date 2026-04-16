@@ -7,7 +7,8 @@ import {LoadingComponent} from "../../shared/abs/loading.component";
 @Component({
     selector: 'app-studying',
     templateUrl: './studying.component.html',
-    styleUrl: './studying.component.scss'
+    styleUrl: './studying.component.scss',
+    standalone: false
 })
 export class StudyingComponent extends LoadingComponent {
     public topics$: Observable<ITopic[]> = of([]);

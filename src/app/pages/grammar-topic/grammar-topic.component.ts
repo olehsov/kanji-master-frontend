@@ -17,7 +17,8 @@ interface GrammarTopicSettings {
 @Component({
     selector: 'app-grammar-topic',
     templateUrl: './grammar-topic.component.html',
-    styleUrl: './grammar-topic.component.scss'
+    styleUrl: './grammar-topic.component.scss',
+    standalone: false
 })
 export class GrammarTopicComponent extends LoadingComponent {
     public grammarTopic$: Observable<GrammarTopic> = EMPTY;

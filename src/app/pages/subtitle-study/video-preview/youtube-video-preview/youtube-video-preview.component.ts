@@ -12,7 +12,8 @@ declare var YT: any;
     selector: 'app-youtube-video-preview',
     templateUrl: './youtube-video-preview.component.html',
     styleUrl: './youtube-video-preview.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class YoutubeVideoPreviewComponent extends LoadingComponent implements OnChanges {
     @Input() public url: string | null = null;

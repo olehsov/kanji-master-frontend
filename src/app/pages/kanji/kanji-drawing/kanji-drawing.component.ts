@@ -5,7 +5,8 @@ import anime from 'animejs';
     selector: 'app-kanji-drawing',
     templateUrl: './kanji-drawing.component.html',
     styleUrl: './kanji-drawing.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class KanjiDrawingComponent implements AfterViewInit {
     @Input() public kanjiSvgContent?: string;
