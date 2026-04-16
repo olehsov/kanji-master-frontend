@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Apollo} from "apollo-angular";
-import {Observable, of, switchMap, throwError} from "rxjs";
+import {filter, Observable, of, switchMap} from "rxjs";
 import {RADICAL_SEARCH_OPTION_QUERY} from "../queries/radical-search-options.queries";
 import {IRadicalSearchOption} from "../interfaces/radical-search-option.interface";
 
@@ -13,9 +13,10 @@ export class RadicalSearchOptionService {
 
     public getRadicalSearchOptions(): Observable<IRadicalSearchOption[]> {
         return this.apollo.watchQuery({query: RADICAL_SEARCH_OPTION_QUERY}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getRadicalSearchOptionDto);
             })

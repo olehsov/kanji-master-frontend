@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, switchMap, throwError} from "rxjs";
+import {filter, Observable, of, switchMap} from "rxjs";
 import {Apollo} from "apollo-angular";
 import {ITopic} from "../interfaces/topic.interface";
 import {GRAMMAR_TOPIC_QUERY, TOPIC_QUERY} from "../queries/topic.queries";
@@ -15,9 +15,10 @@ export class TopicService {
 
     public getAllTopics(): Observable<ITopic[]> {
         return this.apollo.watchQuery({query: TOPIC_QUERY}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getAllTopics);
             })
@@ -26,9 +27,10 @@ export class TopicService {
 
     public getGrammarTopic(topicId: number, settings: IGrammarSettingPayload[]): Observable<GrammarTopic> {
         return this.apollo.watchQuery({query: GRAMMAR_TOPIC_QUERY, variables: {topicId, settings}}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getTopicTask);
             })

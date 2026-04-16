@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Apollo} from "apollo-angular";
-import {Observable, of, switchMap, throwError} from "rxjs";
+import {filter, Observable, of, switchMap} from "rxjs";
 import {Page} from "../interfaces/page";
 import {ISentence} from "../interfaces/sentence.interface";
 import {SENTENCE_BY_KANJI_PAGE} from "../queries/sentence.queries";
@@ -18,9 +18,10 @@ export class SentenceService {
             query: SENTENCE_BY_KANJI_PAGE,
             variables: {page, size, kanji}
         }).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getSentencesByKanji);
             })

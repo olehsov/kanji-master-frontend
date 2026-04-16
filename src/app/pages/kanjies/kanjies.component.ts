@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, OnInit, signal, WritableSignal} from '@angular/core';
 import {BehaviorSubject, debounceTime, EMPTY, map, Observable, of, switchMap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
+import {FormBuilder, FormGroup} from "@angular/forms";
 import {KanjiService} from "../../services/kanji.service";
 import {Page} from "../../interfaces/page";
 import {KanjiInfo} from "../../model/kanji-info.model";
 import {GRADE_ITEMS, JLPT_ITEMS} from "./consts/form-filter.const";
-import {FormBuilder, FormGroup} from "@angular/forms";
 import {KanjiFilter} from "../../interfaces/kanji-filter";
 import {SelectValue} from "../../interfaces/select-value";
 
@@ -20,14 +20,13 @@ import {SelectValue} from "../../interfaces/select-value";
 export class KanjiesComponent implements OnInit {
     public kanjies$: Observable<KanjiInfo[]> = EMPTY;
     public isGradeExpanded: boolean;
-    public readonly loading$: Observable<boolean>;
+    public readonly loading: WritableSignal<boolean>;
     public readonly route: ActivatedRoute | null;
     public readonly jlpt: SelectValue<string>[];
     public readonly grades: string[];
     public readonly form: FormGroup;
     private readonly batchSize: number;
     private readonly _kanjies$: BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>;
-    private readonly _loading$: BehaviorSubject<boolean>;
 
 
     constructor(
@@ -37,8 +36,7 @@ export class KanjiesComponent implements OnInit {
     ) {
         this.batchSize = 75;
         this._kanjies$ = new BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>('init');
-        this._loading$ = new BehaviorSubject<boolean>(false);
-        this.loading$ = this._loading$.asObservable();
+        this.loading = signal<boolean>(false);
         this.route = this.activatedRoute.parent;
         this.jlpt = JLPT_ITEMS;
         this.grades = GRADE_ITEMS;
@@ -58,25 +56,25 @@ export class KanjiesComponent implements OnInit {
         this.kanjies$ = this._kanjies$.asObservable().pipe(
             switchMap(page => {
                 if (page === 'reset') {
-                    this._loading$.next(true);
+                    this.loading.set(true);
                     return of([]);
                 }
                 if (page === 'init') {
-                    this._loading$.next(true);
+                    this.loading.set(true);
                     return this.kanjiService.getPage(0, this.batchSize, this.getFilter()).pipe(
                         map(newPage => {
                             (this._kanjies$ as any)._value = newPage;
-                            this._loading$.next(false);
+                            this.loading.set(false);
                             return newPage.content;
                         }),
                     );
                 }
-                this._loading$.next(true);
+                this.loading.set(true);
                 return this.kanjiService.getPage(page.number + 1, this.batchSize, this.getFilter()).pipe(
                     map(newPage => {
                         const content: KanjiInfo[] = [...page.content, ...newPage.content];
                         (this._kanjies$ as any)._value = {...newPage, content};
-                        this._loading$.next(false);
+                        this.loading.set(false);
                         return content;
                     }),
                 );
@@ -87,7 +85,7 @@ export class KanjiesComponent implements OnInit {
     @HostListener('window:scroll')
     onScroll(): void {
         const page: Page<KanjiInfo> | 'reset' | 'init' = this._kanjies$.getValue();
-        if (this._loading$.getValue() || page === 'reset' || page === 'init' || page.last) return;
+        if (this.loading() || page === 'reset' || page === 'init' || page.last) return;
 
         const documentHeight: number = document.documentElement.scrollHeight;
         const threshold = 250;

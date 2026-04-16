@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
-import {map, Observable, of, switchMap, throwError} from "rxjs";
+import {filter, map, Observable, of, switchMap} from "rxjs";
 import {Apollo} from "apollo-angular";
+import {TypedDocumentNode} from "@apollo/client/core";
+import {HttpClient} from "@angular/common/http";
 import {Page} from "../interfaces/page";
 import {
     KANJI_FIND_BY_ID,
@@ -11,8 +13,6 @@ import {
 import {KanjiInfo} from "../model/kanji-info.model";
 import {KanjiFilter} from "../interfaces/kanji-filter";
 import {PageVariables} from "../variables/page.variables";
-import {TypedDocumentNode} from "@apollo/client/core";
-import { HttpClient } from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -25,18 +25,19 @@ export class KanjiService {
         this.uri = environment.apiUrl;
     }
 
-    public getPage(page = 0, size = 10, filter: KanjiFilter | null): Observable<Page<KanjiInfo>> {
+    public getPage(page = 0, size = 10, kanjiFilter: KanjiFilter | null): Observable<Page<KanjiInfo>> {
         const variables: PageVariables & { filter?: KanjiFilter } = {page, size};
         const query: TypedDocumentNode<{ getKanjis: Page<KanjiInfo> }, PageVariables & {
             filter?: KanjiFilter
-        }> = filter ? KANJI_SHORT_FILTERED_PAGE : KANJI_SHORT_PAGE;
-        if (filter) {
-            variables.filter = filter;
+        }> = kanjiFilter ? KANJI_SHORT_FILTERED_PAGE : KANJI_SHORT_PAGE;
+        if (kanjiFilter) {
+            variables.filter = kanjiFilter;
         }
         return this.apollo.watchQuery({query, variables}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getKanjis);
             })
@@ -45,9 +46,10 @@ export class KanjiService {
 
     public getKanji(kanji: string): Observable<KanjiInfo> {
         return this.apollo.watchQuery({query: KANJI_FIND_BY_ID, variables: {kanji}}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(KanjiInfo.fromObject(data.getKanji));
             })
@@ -56,9 +58,10 @@ export class KanjiService {
 
     public getKanjiesByRadicals(radicals: string[]): Observable<KanjiInfo[]> {
         return this.apollo.watchQuery({query: KANJIES_BY_RADICALS, variables: {radicals}}).valueChanges.pipe(
+            filter((result) => result.dataState === 'complete'),
             switchMap(({data, error}) => {
                 if (error) {
-                    throw throwError(() => error)
+                    throw new Error(error.message)
                 }
                 return of(data.getKanjiesByRadical);
             })

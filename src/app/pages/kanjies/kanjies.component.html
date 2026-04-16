@@ -30,7 +30,7 @@
         </div>
     }
 
-    @if (loading$ | async) {
+    @if (loading()) {
         <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
     }
 </section>
