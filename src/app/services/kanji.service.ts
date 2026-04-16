@@ -12,7 +12,7 @@ import {KanjiInfo} from "../model/kanji-info.model";
 import {KanjiFilter} from "../interfaces/kanji-filter";
 import {PageVariables} from "../variables/page.variables";
 import {TypedDocumentNode} from "@apollo/client/core";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
 @Injectable({
