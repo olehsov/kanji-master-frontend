@@ -55,8 +55,12 @@ export class KanjiService {
     );
   }
 
-  /** Downloads a printable practice sheet. Not wired to the UI yet. */
-  public downloadKanjiPdf(filter: KanjiFilter | null): Observable<void> {
+  /**
+   * Downloads a printable practice sheet for the filter. Errors pass through as
+   * `HttpErrorResponse`; the backend answers 404 (Problem Details) when no kanji
+   * match. Never call it with an empty filter: that renders the whole dictionary.
+   */
+  public downloadKanjiPdf(filter: KanjiFilter): Observable<void> {
     return this.http
       .post(`${this.uri}/pdf/kanji-practice`, filter, { responseType: 'blob' })
       .pipe(

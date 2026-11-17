@@ -68,55 +68,62 @@
           </mat-list-item>
         }
       </div>
-      <mat-tab-group animationDuration="1000ms">
-        @for (type of availableTaskTypes(); track type) {
-          <mat-tab [label]="type | taskTypeRepresentation">
-            @for (task of tasksByType().get(type) ?? []; track $index) {
-              @let userAnswer = checkedAnswers().get(task);
-              <div class="question-item">
-                <mat-list-item>
-                  <span matListItemTitle lang="ja">{{ task.question }}</span>
-                  <span>{{ task.description }}</span>
-                </mat-list-item>
-                <mat-list-item>
-                  <div class="question-item-answer">
-                    <mat-form-field>
-                      <input
-                        #answerInput
-                        matInput
-                        lang="ja"
-                        placeholder="Впишіть відповідь"
-                        aria-label="Впишіть відповідь"
-                        [disabled]="userAnswer !== undefined"
-                        (keydown.enter)="checkAnswer(task, answerInput.value)"
-                      />
-                    </mat-form-field>
-                    @if (userAnswer === undefined) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        aria-label="Перевірити відповідь"
-                        (click)="checkAnswer(task, answerInput.value)"
-                      >
-                        <mat-icon>task_alt</mat-icon>
-                      </button>
-                    } @else {
-                      <span class="answer" lang="ja">{{
-                        task.correctAnswer
-                      }}</span>
-                      @if (userAnswer === task.correctAnswer) {
-                        <mat-icon aria-label="Правильно">check</mat-icon>
+      @if (availableTaskTypes().length === 0) {
+        <p class="no-tasks">
+          Вправи вимкнено. Увімкніть хоча б один тип завдань у налаштуваннях і
+          натисніть «Застосувати Фільтри», щоб отримати вправи.
+        </p>
+      } @else {
+        <mat-tab-group animationDuration="1000ms">
+          @for (type of availableTaskTypes(); track type) {
+            <mat-tab [label]="type | taskTypeRepresentation">
+              @for (task of tasksByType().get(type) ?? []; track $index) {
+                @let userAnswer = checkedAnswers().get(task);
+                <div class="question-item">
+                  <mat-list-item>
+                    <span matListItemTitle lang="ja">{{ task.question }}</span>
+                    <span>{{ task.description }}</span>
+                  </mat-list-item>
+                  <mat-list-item>
+                    <div class="question-item-answer">
+                      <mat-form-field>
+                        <input
+                          #answerInput
+                          matInput
+                          lang="ja"
+                          placeholder="Впишіть відповідь"
+                          aria-label="Впишіть відповідь"
+                          [disabled]="userAnswer !== undefined"
+                          (keydown.enter)="checkAnswer(task, answerInput.value)"
+                        />
+                      </mat-form-field>
+                      @if (userAnswer === undefined) {
+                        <button
+                          mat-icon-button
+                          type="button"
+                          aria-label="Перевірити відповідь"
+                          (click)="checkAnswer(task, answerInput.value)"
+                        >
+                          <mat-icon>task_alt</mat-icon>
+                        </button>
                       } @else {
-                        <mat-icon aria-label="Неправильно">warning</mat-icon>
+                        <span class="answer" lang="ja">{{
+                          task.correctAnswer
+                        }}</span>
+                        @if (userAnswer === task.correctAnswer) {
+                          <mat-icon aria-label="Правильно">check</mat-icon>
+                        } @else {
+                          <mat-icon aria-label="Неправильно">warning</mat-icon>
+                        }
                       }
-                    }
-                  </div>
-                </mat-list-item>
-              </div>
-            }
-          </mat-tab>
-        }
-      </mat-tab-group>
+                    </div>
+                  </mat-list-item>
+                </div>
+              }
+            </mat-tab>
+          }
+        </mat-tab-group>
+      }
     </mat-list>
   </div>
 }
