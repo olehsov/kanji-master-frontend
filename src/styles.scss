@@ -1,6 +1,6 @@
-@import "src/assets/styles/mixins.scss";
-@import "src/assets/styles/variables.scss";
-@import "src/assets/styles/fonts.scss";
+@use 'src/assets/styles/mixins' as *;
+@use 'src/assets/styles/variables' as *;
+@use 'src/assets/styles/fonts' as *;
 
 body {
   font-family: 'Source Sans 3', 'Noto Sans ', sans-serif;
@@ -13,10 +13,15 @@ a {
   text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6, h7 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
   font-family: 'Source Sans 3', 'Noto Sans ', sans-serif;
 }
-
 
 main {
   max-width: 80vw;
@@ -26,7 +31,7 @@ main {
 }
 
 .regular-tooltip {
-  font-size: 12px
+  font-size: 12px;
 }
 
 // Updated
@@ -43,7 +48,21 @@ main {
   }
 }
 
-.youtube-player {
-  border-radius: 15px;
+.youtube-player-host {
+  width: 100%;
+  height: 100%;
+
+  iframe {
+    border-radius: 15px;
+  }
 }
 
+.page-progress {
+  margin-top: 1em;
+}
+
+.load-error {
+  margin-top: 1em;
+  color: #b00020;
+  text-align: center;
+}

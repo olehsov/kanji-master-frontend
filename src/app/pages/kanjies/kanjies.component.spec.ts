@@ -1,21 +1,44 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { KanjiesComponent } from './kanjies.component';
+import { KanjiService } from '../../services/kanji.service';
+import { Page } from '../../interfaces/page';
+import { KanjiDto } from '../../model/kanji-info.model';
 
-describe('KanjiComponent', () => {
-  let component: KanjiesComponent;
-  let fixture: ComponentFixture<KanjiesComponent>;
-
-  beforeEach(() => {
+describe('KanjiesComponent', () => {
+  function setup(getPage: KanjiService['getPage']) {
     TestBed.configureTestingModule({
-      declarations: [KanjiesComponent]
+      providers: [
+        provideRouter([]),
+        { provide: KanjiService, useValue: { getPage } },
+      ],
     });
-    fixture = TestBed.createComponent(KanjiesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    return TestBed.createComponent(KanjiesComponent);
+  }
+
+  it('renders the first page as links', async () => {
+    const fixture = setup(() =>
+      of({
+        content: [{ kanji: '人' }, { kanji: '日' }],
+        number: 0,
+        last: true,
+        first: true,
+      } as unknown as Page<KanjiDto>),
+    );
+    await fixture.whenStable();
+    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      'a.kanji-card',
+    );
+    expect([...cards].map((c) => c.textContent?.trim())).toEqual(['人', '日']);
+    expect(cards[0].getAttribute('href')).toBe('/kanji/%E4%BA%BA');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('shows an error instead of spinning forever', async () => {
+    const fixture = setup(() => throwError(() => new Error('down')));
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('[role="alert"]')).not.toBeNull();
+    expect(element.querySelector('mat-progress-bar')).toBeNull();
   });
 });

@@ -1,53 +1,54 @@
 <div class="subtitle-study-container">
-    <div class="video-input-container">
-        <mat-form-field class="url-field-input">
-            <mat-label>Вставте URL</mat-label>
-            <input [formControl]="mediaControl" matInput placeholder="URL">
-            @if (mediaControl.invalid && mediaControl.touched) {
-                @if (mediaControl.hasError('required')) {
-                    <mat-error>URL не може бути порожнім</mat-error>
-                }
-                @if (mediaControl.hasError('pattern')) {
-                    <mat-error>Невірний формат URL</mat-error>
-                }
-            }
-        </mat-form-field>
+  <div class="video-input-container">
+    <mat-form-field class="url-field-input">
+      <mat-label>Вставте URL</mat-label>
+      <input [formControl]="mediaControl" matInput placeholder="URL" />
+      @if (mediaControl.hasError('required')) {
+        <mat-error>URL не може бути порожнім</mat-error>
+      } @else if (mediaControl.hasError('pattern')) {
+        <mat-error>Невірний формат URL</mat-error>
+      }
+    </mat-form-field>
 
-        <mat-form-field>
-            <mat-label>Тип Завантаження</mat-label>
-            <mat-select [formControl]="mediaTypeControl" placeholder="Тип Завантаження">
-                <mat-select-trigger>
-                    <ng-container
-                            *ngTemplateOutlet="selectMedia; context: { mediaType: mediaTypeControl.value }"></ng-container>
-                </mat-select-trigger>
-                @for (mediaType of mediaTypesValues; track mediaType) {
-                    <mat-option [value]="mediaType">
-                        <ng-container *ngTemplateOutlet="selectMedia; context: { mediaType: mediaType }"></ng-container>
-                    </mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field>
+      <mat-label>Тип Завантаження</mat-label>
+      <mat-select [formControl]="mediaTypeControl">
+        <mat-select-trigger>
+          <ng-container
+            *ngTemplateOutlet="selectMedia; context: { mediaType: mediaType() }"
+          />
+        </mat-select-trigger>
+        @for (type of mediaTypesValues; track type) {
+          <mat-option [value]="type">
+            <ng-container
+              *ngTemplateOutlet="selectMedia; context: { mediaType: type }"
+            />
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  @if (mediaType() === mediaTypes.UPLOAD) {
+    <div class="video-preview-container">
+      <app-uploaded-video-preview />
     </div>
-    @if (mediaControl.valid) {
-        <div class="video-preview-container">
-            @switch (mediaTypeControl.value) {
-                @case (mediaTypes.YOUTUBE) {
-                    <app-youtube-video-preview [url]="mediaControl.value"></app-youtube-video-preview>
-                }
-                @case (mediaTypes.SPOTIFY) {
-                    <app-spotify-audio-preview [url]="mediaControl.value"></app-spotify-audio-preview>
-                }
-                @case (mediaTypes.UPLOAD) {
-                    <app-uploaded-video-preview></app-uploaded-video-preview>
-                }
-            }
-        </div>
-    }
+  } @else if (validUrl(); as url) {
+    <div class="video-preview-container">
+      @switch (mediaType()) {
+        @case (mediaTypes.YOUTUBE) {
+          <app-youtube-video-preview [url]="url" />
+        }
+        @case (mediaTypes.SPOTIFY) {
+          <app-spotify-audio-preview [url]="url" />
+        }
+      }
+    </div>
+  }
 </div>
 
 <ng-template #selectMedia let-mediaType="mediaType">
-    <div class="select-media-type">
-        <i [attr.data-icon]="mediaType" class="select-media-type-icon"></i>
-        {{ mediaType | subtitleMediaType }}
-    </div>
+  <div class="select-media-type">
+    <i [attr.data-icon]="mediaType" class="select-media-type-icon"></i>
+    {{ mediaType | subtitleMediaType }}
+  </div>
 </ng-template>

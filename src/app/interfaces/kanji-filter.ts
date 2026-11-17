@@ -1,5 +1,5 @@
 export interface KanjiFilter {
-    jlpt: string[];
-    grade: string[];
-    search: string;
+  jlpt: string[];
+  grade: string[];
+  search: string;
 }

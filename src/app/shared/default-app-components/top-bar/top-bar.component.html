@@ -1,17 +1,24 @@
 <header>
-  <img [ngSrc]="logoPath" alt="logo" class="logo" height="137" width="300" />
-  <nav>
-    <ul>
-      @for (item of menuItems; track item) {
-        <button
-          [routerLink]="item.routerLink"
-          class="dropped-background page-button"
-          mat-button
-          routerLinkActive="active-page"
-        >
-          {{ item.label || '' }}
-        </button>
-      }
-    </ul>
+  <a routerLink="/kanji" aria-label="Kanji Master — на головну">
+    <img
+      [ngSrc]="logoPath"
+      alt="Kanji Master"
+      class="logo"
+      height="137"
+      width="300"
+    />
+  </a>
+  <nav aria-label="Основна навігація">
+    @for (item of menuItems; track item.routerLink) {
+      <a
+        mat-button
+        [routerLink]="item.routerLink"
+        class="dropped-background page-button"
+        routerLinkActive="active-page"
+        ariaCurrentWhenActive="page"
+      >
+        {{ item.label }}
+      </a>
+    }
   </nav>
 </header>

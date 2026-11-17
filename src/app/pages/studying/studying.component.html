@@ -1,17 +1,19 @@
 <div class="studying-cards">
-    @for (topic of (topics$ | async) || []; track topic.id) {
-        <mat-card appearance="outlined">
-            <mat-card-header>
-                <mat-card-title>{{ topic.header }}</mat-card-title>
-                <mat-card-subtitle>{{ topic.description }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-actions align="end">
-                <button mat-button [routerLink]="topic.id">Вчити більше</button>
-            </mat-card-actions>
-        </mat-card>
-    }
+  @for (topic of topics.hasValue() ? topics.value() : []; track topic.id) {
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ topic.header }}</mat-card-title>
+        <mat-card-subtitle>{{ topic.description }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions align="end">
+        <a mat-button [routerLink]="topic.id">Вчити більше</a>
+      </mat-card-actions>
+    </mat-card>
+  }
 
-    @if (loading$ | async) {
-        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
-    }
+  @if (topics.isLoading()) {
+    <mat-progress-bar class="page-progress" mode="indeterminate" />
+  } @else if (topics.error()) {
+    <p class="load-error" role="alert">Не вдалося завантажити теми.</p>
+  }
 </div>

@@ -1,5 +1,5 @@
 export interface SelectValue<T> {
-    label: string;
-    value: T,
-    disabled?: boolean
+  label: string;
+  value: T;
+  disabled?: boolean;
 }

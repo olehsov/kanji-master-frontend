@@ -1,49 +1,41 @@
-import {Component, Input, NgZone, OnChanges, SimpleChanges} from '@angular/core';
-import {SPOTIFY_REGEXP} from "../../../../shared/const/regexp.const";
-import {SpotifyService} from "../../../../services/spotify.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { SPOTIFY_REGEXP } from '../../../../shared/const/regexp.const';
 
-declare global {
-    interface Window {
-        onSpotifyWebPlaybackSDKReady: () => void;
-        Spotify: any;
-    }
-}
-
+/**
+ * Spotify track embed. WORK IN PROGRESS: subtitle sync is not implemented;
+ * see SpotifyService for the planned Web API integration.
+ */
 @Component({
-    selector: 'app-spotify-audio-preview',
-    templateUrl: './spotify-audio-preview.component.html',
-    styleUrl: './spotify-audio-preview.component.scss',
-    standalone: false
+  selector: 'app-spotify-audio-preview',
+  templateUrl: './spotify-audio-preview.component.html',
+  styleUrl: './spotify-audio-preview.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpotifyAudioPreviewComponent implements OnChanges {
-    @Input() url: string | null = null;
-    trackId: string | null = null;
-    player: any;
-    currentTime = 0;
-    duration = 0;
+export class SpotifyAudioPreviewComponent {
+  private readonly sanitizer = inject(DomSanitizer);
 
-    constructor(private readonly zone: NgZone, private readonly spotifyService: SpotifyService) {
-    }
+  public readonly url = input<string | null>(null);
 
-    public ngOnChanges(changes: SimpleChanges) {
-        if (changes['url']) {
-            if (changes['url'].currentValue) {
-                this.trackId = this.extractTrackId(changes['url'].currentValue as string);
-                if (this.trackId) {
-                    // this.initPlayer();
-                    this.spotifyService.getAccessToken().subscribe(a => console.log(a))
-                }
-                return;
-            }
-            this.trackId = null;
-        }
-    }
+  /** 22-char base62 track id, validated by SPOTIFY_REGEXP. */
+  protected readonly trackId = computed(() => {
+    const match = this.url()?.match(SPOTIFY_REGEXP);
+    return match?.[2] ?? match?.[4] ?? null;
+  });
 
-
-    private extractTrackId(url: string): string | null {
-        const match = url.match(SPOTIFY_REGEXP);
-        return match ? match[2] : null;
-    }
-
-
+  /** Only a regex-validated track id is ever trusted as a resource URL. */
+  protected readonly embedUrl = computed<SafeResourceUrl | null>(() => {
+    const trackId = this.trackId();
+    return trackId
+      ? this.sanitizer.bypassSecurityTrustResourceUrl(
+          `https://open.spotify.com/embed/track/${trackId}`,
+        )
+      : null;
+  });
 }

@@ -1,5 +1,5 @@
-import {PageVariables} from "./page.variables";
+import { PageVariables } from './page.variables';
 
 export interface SentenceVariables extends PageVariables {
-    kanji: string;
+  kanji: string;
 }

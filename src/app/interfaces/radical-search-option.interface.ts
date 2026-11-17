@@ -1,5 +1,5 @@
 export interface IRadicalSearchOption {
-    radical: string;
-    strokes: number;
-    isSimplifiedRadical: boolean;
+  radical: string;
+  strokes: number;
+  isSimplifiedRadical: boolean;
 }

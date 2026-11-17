@@ -1,81 +1,62 @@
-import {ModelUtil} from "../utils/model.util";
-import {Word} from "../interfaces/word.interface";
+import { KanjiExampleWord } from '../interfaces/kanji-example-word.interface';
 
-export class KanjiInfo {
-    public readonly gradePrettified: string;
-    public readonly gradeTooltip: string;
-    public readonly jlptPrettified: string;
-    public readonly jlptTooltip: string;
-    public readonly heisigEn: string;
+/** Raw kanji shape as returned by the GraphQL API. */
+export interface KanjiDto {
+  kanji: string;
+  radical?: string | null;
+  radvar?: string | null;
+  type?: string | null;
+  regularOn?: string | null;
+  regularKun?: string | null;
+  onyomi?: string | null;
+  kunyomi?: string | null;
+  nanori?: string | null;
+  strokes?: number | null;
+  grade?: string | null;
+  jlpt?: string | null;
+  kanken?: string | null;
+  frequency?: number | null;
+  meaning?: string | null;
+  compactMeaning?: string | null;
+  words?: KanjiExampleWord[] | null;
+}
 
-    constructor(
-        public readonly kanji?: string,
-        public readonly radical?: string,
-        public readonly radvar?: string,
-        public readonly type?: string,
-        public readonly regularOn?: string,
-        public readonly regularKun?: string,
-        public readonly onyomi?: string,
-        public readonly kunyomi?: string,
-        public readonly nanori?: string,
-        public readonly strokes?: number,
-        public readonly grade?: string,
-        public readonly jlpt?: string,
-        public readonly kanken?: string,
-        public readonly frequency?: number,
-        public readonly meaning?: string,
-        public readonly compactMeaning?: string,
-        public readonly words?: Word[]
-    ) {
-        this.kanji = kanji;
-        this.radical = radical;
-        this.radvar = radvar;
-        this.type = type;
-        this.regularOn = regularOn;
-        this.regularKun = regularKun;
-        this.onyomi = onyomi;
-        this.kunyomi = kunyomi;
-        this.nanori = nanori;
-        this.strokes = strokes;
-        this.grade = grade;
-        this.jlpt = jlpt;
-        this.kanken = kanken;
-        this.frequency = frequency;
-        this.meaning = meaning;
-        this.compactMeaning = compactMeaning;
-        this.words = words;
-        if (grade) {
-            this.gradePrettified = this.getValueWithoutBrackets(grade);
-            this.gradeTooltip = this.getValueFromBrackets(grade);
-        } else {
-            this.gradePrettified = this.gradeTooltip = '';
-        }
-        if (jlpt) {
-            this.jlptPrettified = this.getValueWithoutBrackets(jlpt);
-            this.jlptTooltip = this.getValueFromBrackets(jlpt);
-        } else {
-            this.jlptPrettified = this.jlptTooltip = '';
-        }
-        this.heisigEn = meaning ? meaning.split(';')[0] : '';
-    }
+/** Kanji enriched with values prepared for display. */
+export interface KanjiInfo extends KanjiDto {
+  gradePrettified: string;
+  gradeTooltip: string;
+  jlptPrettified: string;
+  jlptTooltip: string;
+  /** First meaning (Heisig keyword). */
+  heisigEn: string;
+  /** Meanings after the first one. */
+  extraMeanings: string[];
+  /** Up to 5 example words, excluding the kanji itself. */
+  shortWordList: KanjiExampleWord[];
+}
 
-    public static fromObject(source: KanjiInfo): KanjiInfo {
-        return ModelUtil.fromObject(source, KanjiInfo);
-    }
+const MAX_EXAMPLE_WORDS = 5;
 
-    public getShortWordList(): Word[] {
-        if (this.words) {
-            return this.words.filter(word => word.word !== this.kanji).slice(0, 5);
-        }
-        return [];
-    }
+function withoutBrackets(value: string): string {
+  return value.replace(/\(.*?\)/, '').trim();
+}
 
-    private getValueWithoutBrackets(value: string): string {
-        return value.replace(/\(.*?\)/, '').trim();
-    }
+function fromBrackets(value: string): string {
+  return value.match(/\((.*?)\)/)?.[1] ?? '';
+}
 
-    private getValueFromBrackets(value: string): string {
-        const parsedValue: RegExpMatchArray | null = value.match(/\((.*?)\)/);
-        return parsedValue ? parsedValue[1] : '';
-    }
+export function toKanjiInfo(dto: KanjiDto): KanjiInfo {
+  const meanings: string[] = dto.meaning ? dto.meaning.split(';') : [];
+  return {
+    ...dto,
+    gradePrettified: dto.grade ? withoutBrackets(dto.grade) : '',
+    gradeTooltip: dto.grade ? fromBrackets(dto.grade) : '',
+    jlptPrettified: dto.jlpt ? withoutBrackets(dto.jlpt) : '',
+    jlptTooltip: dto.jlpt ? fromBrackets(dto.jlpt) : '',
+    heisigEn: meanings[0] ?? '',
+    extraMeanings: meanings.slice(1),
+    shortWordList: (dto.words ?? [])
+      .filter((word) => word.word !== dto.kanji)
+      .slice(0, MAX_EXAMPLE_WORDS),
+  };
 }

@@ -1,5 +1,5 @@
-@import "src/assets/styles/variables";
-@import "src/assets/styles/mixins";
+@use 'src/assets/styles/variables' as *;
+@use 'src/assets/styles/mixins' as *;
 
 header {
   background: linear-gradient(180deg, rgba(51, 51, 51, 0.3), transparent);
@@ -10,7 +10,6 @@ header {
   padding: 20px;
   height: 50px;
 
-
   .logo {
     height: 110px;
     width: 110px;
@@ -18,6 +17,7 @@ header {
 
   nav {
     margin-left: auto;
+    display: flex;
 
     .page-button {
       display: block;
@@ -33,7 +33,7 @@ header {
       }
 
       &:before {
-        content: "";
+        content: '';
         height: 3px;
         width: 0;
         position: absolute;
@@ -42,24 +42,19 @@ header {
         background: rgba(0, 0, 0, 50%);
       }
 
-      &:hover:before, &.active-page:before {
+      &:hover:before,
+      &.active-page:before,
+      &:focus-visible:before {
         transition: 0.5s;
         width: 100%;
       }
 
-      &:focus, &:focus-visible {
+      &:focus,
+      &:focus-visible {
         border: none;
         outline: none;
         box-shadow: none;
       }
     }
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-    }
   }
 }
-
