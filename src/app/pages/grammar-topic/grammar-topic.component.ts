@@ -80,10 +80,6 @@ export class GrammarTopicComponent {
       this.topicService.getGrammarTopic(params.id, params.settings),
   });
 
-  protected readonly availableTaskTypes = computed(() =>
-    this.settings().map(({ type }) => type),
-  );
-
   protected readonly tasksByType = computed(() => {
     const tasks = this.grammarTopic.hasValue()
       ? this.grammarTopic.value().tasks
@@ -94,6 +90,11 @@ export class GrammarTopicComponent {
     }
     return byType;
   });
+
+  /** Task types with at least one exercise in the loaded lesson, in display order. */
+  protected readonly availableTaskTypes = computed(() =>
+    this.taskTypes.filter((type) => this.tasksByType().has(type)),
+  );
 
   /** User answers for tasks that were already checked. */
   protected readonly checkedAnswers = signal(new Map<Task, string>());
@@ -126,11 +127,18 @@ export class GrammarTopicComponent {
     return new FormControl(DEFAULT_TASK_AMOUNT, { nonNullable: true });
   }
 
-  /** Enabled task types only (disabled controls are excluded from `value`). */
+  /**
+   * Enabled task types only. Read the controls directly: once every control
+   * is disabled the group is disabled too and `form.value` lists all of them
+   * again. With every type switched off this sends `[]`, and the backend
+   * returns a lesson without exercises.
+   */
   private readSettings(): IGrammarSettingPayload[] {
-    return Object.entries(this.form.value).map(([type, taskAmount]) => ({
-      type: type as TaskType,
-      taskAmount: taskAmount as number,
-    }));
+    return this.taskTypes
+      .filter((type) => this.form.controls[type].enabled)
+      .map((type) => ({
+        type,
+        taskAmount: this.form.controls[type].value,
+      }));
   }
 }

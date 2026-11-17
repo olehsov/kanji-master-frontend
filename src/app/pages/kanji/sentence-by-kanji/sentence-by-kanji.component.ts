@@ -7,8 +7,9 @@ import {
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SentenceService } from '../../../services/sentence.service';
 
-const FIRST_PAGE = 1;
-const PAGE_SIZE = 15;
+/** Backend pages are 0-based (Spring Data), so the first page is 0. */
+export const FIRST_PAGE = 0;
+export const PAGE_SIZE = 15;
 
 /** Example sentences for a kanji. WORK IN PROGRESS — not used in any page yet. */
 @Component({

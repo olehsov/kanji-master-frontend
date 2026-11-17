@@ -4,5 +4,4 @@ export interface IIndividualSubtitleTranslationDto {
   meaning: string;
   isWord: boolean;
   jlpt: string;
-  subtitleId: number;
 }

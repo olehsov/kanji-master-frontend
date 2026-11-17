@@ -35,7 +35,8 @@ Before finishing any change, run `npm run build`, `npm run lint` and `npx ng tes
 ## Backend contract
 - `environment.apiUrl` (`src/environments/`): dev `http://localhost:8080`, prod Cloud Run URL.
 - GraphQL `POST {apiUrl}/graphql`: `getKanjis(page,size,filter)`, `getKanji(kanji)`, `getKanjiesByRadical(radicals)`, `getRadicalSearchOptionDto`, `getAllTopics`, `getTopicTask(topicId,settings)`, `getSentencesByKanji(...)`.
-- REST: `POST {apiUrl}/api/subtitle/extract-youtube-video` `{youtubeUrl}`, `POST {apiUrl}/pdf/kanji-practice` (KanjiFilter → PDF blob).
+- REST: `POST {apiUrl}/api/subtitle/extract-youtube-video` `{youtubeUrl}`, `POST {apiUrl}/pdf/kanji-practice` (KanjiFilter → PDF blob; 404 Problem Details when nothing matches; never send an empty filter, it renders the whole dictionary). REST errors are RFC 9457 Problem Details (`detail`).
+- Paging is 0-based (Spring Data): the first page is `page: 0`.
 - The JLPT filter sends labels like `N1 (advanced)` (`JLPT_ITEMS` label), not `JLPT1`. Keep that contract.
 
 ## Angular rules (follow in every change)
@@ -54,5 +55,5 @@ Before finishing any change, run `npm run build`, `npm run lint` and `npx ng tes
 
 ## Known issues / TODO
 - **SECURITY: the Spotify client secret is hardcoded** in `services/spotify.service.ts` and is in git history (commit `15773e14`). Plan: move the client-credentials token exchange to `kanji-master-backend` (e.g. `GET /api/spotify/token`), call that from the frontend, delete the secret here, and **rotate it** in the Spotify dashboard. Don't use `SpotifyService` in new code until then.
-- WIP features, kept on purpose: `UploadedVideoPreviewComponent` (placeholder), Spotify subtitle sync (`SpotifyService` is not wired up), `SentenceByKanjiComponent` (not used on any page), `KanjiService.downloadKanjiPdf` (no button in the UI yet).
+- WIP features, kept on purpose: `UploadedVideoPreviewComponent` (placeholder), Spotify subtitle sync (`SpotifyService` is not wired up), `SentenceByKanjiComponent` (not used on any page).
 - Initial bundle is ~640 kB (Material + Apollo). The budget warning is at 750 kB.

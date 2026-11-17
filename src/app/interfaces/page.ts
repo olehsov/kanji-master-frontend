@@ -7,11 +7,4 @@ export interface Page<T> {
   number: number;
   numberOfElements: number;
   first: boolean;
-  sort: Sort | null;
-}
-
-export interface Sort {
-  sorted: boolean;
-  unsorted: boolean;
-  empty: boolean;
 }

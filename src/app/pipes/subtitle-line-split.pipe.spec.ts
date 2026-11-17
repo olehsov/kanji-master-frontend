@@ -9,7 +9,6 @@ function translation(text: string): IIndividualSubtitleTranslationDto {
     meaning: text,
     isWord: true,
     jlpt: 'N5',
-    subtitleId: 1,
   };
 }
 
