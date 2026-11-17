@@ -1,7 +1,9 @@
-<div
-    #drawingContainer
-    (click)="runAnimation()"
-    class="drawing-container"
-    matTooltip="Натисніть, щоб побачити написання ієрогліфа"
-    matTooltipPosition="above"
-></div>
+<button
+  #drawingContainer
+  type="button"
+  (click)="runAnimation()"
+  class="drawing-container"
+  aria-label="Показати порядок рисок"
+  matTooltip="Натисніть, щоб побачити написання ієрогліфа"
+  matTooltipPosition="above"
+></button>

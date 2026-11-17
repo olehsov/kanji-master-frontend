@@ -1,87 +1,122 @@
-@if (grammarTopic$ | async; as grammarTopic) {
-    <div class="grammar-settings">
-        <button (click)="isSettingOpened = !isSettingOpened" class="setting" mat-icon-button>
-            <mat-icon>settings</mat-icon>
-        </button>
-        @if (isSettingOpened) {
-            <div class="setting-values">
-                @for (type of taskTypes; track type) {
-                    <div [formGroup]="form" class="type-range">
-                        <mat-slider
-                                [displayWith]="formatLabel"
-                                min="1"
-                                max="10"
-                                step="1"
-                                showTickMarks
-                                discrete
-                        >
-                            <input [formControlName]="type" matSliderThumb>
-                        </mat-slider>
-                        <mat-slide-toggle color="primary" [checked]="form.controls[type].enabled"
-                                          (change)="onToggleChanged($event, type)">
-                            Ввімкнути {{ type | taskTypeRepresentation }}
-                        </mat-slide-toggle>
-                    </div>
-                }
-            </div>
-            <button (click)="resetGrammars()" class="reset" color="primary" mat-raised-button>Застосувати Фільтри
-            </button>
-        }
+<div class="grammar-settings">
+  <button
+    mat-icon-button
+    type="button"
+    class="setting"
+    aria-label="Налаштування завдань"
+    [attr.aria-expanded]="isSettingOpened()"
+    (click)="isSettingOpened.set(!isSettingOpened())"
+  >
+    <mat-icon>settings</mat-icon>
+  </button>
+  @if (isSettingOpened()) {
+    <div class="setting-values" [formGroup]="form">
+      @for (type of taskTypes; track type) {
+        <div class="type-range">
+          <mat-slider
+            [displayWith]="formatLabel"
+            min="1"
+            max="10"
+            step="1"
+            showTickMarks
+            discrete
+          >
+            <input
+              [formControlName]="type"
+              matSliderThumb
+              [attr.aria-label]="type | taskTypeRepresentation"
+            />
+          </mat-slider>
+          <mat-slide-toggle
+            color="primary"
+            [checked]="form.controls[type].enabled"
+            (change)="onToggleChanged($event, type)"
+          >
+            Ввімкнути {{ type | taskTypeRepresentation }}
+          </mat-slide-toggle>
+        </div>
+      }
     </div>
-    <div class="grammar-topic">
-        <h3>{{ grammarTopic.header }}</h3>
-        <h5 [innerHTML]="grammarTopic.formation"></h5>
-        <mat-list class="grammar-list-wrapping">
-            <div class="example-list">
-                @for (example of grammarTopic.exampleSentences; track example) {
-                    <mat-list-item class="example-item" lines="3">
-                        <span matListItemTitle>{{ example.sentence }}</span>
-                        <span>{{ example.translation }}</span>
-                    </mat-list-item>
-                }
-            </div>
-            <mat-tab-group animationDuration="1000ms">
-                @for (type of availableTaskTypes; track type) {
-                    <mat-tab label="{{ type | taskTypeRepresentation }}">
-                        @for (task of type | filter : grammarTopic.tasks : 'taskType'; track task) {
-                            <div class="question-item">
-                                <mat-list-item>
-                                    <span matListItemTitle>{{ task.question }}</span>
-                                    <span>{{ task.description }}</span>
-                                </mat-list-item>
-                                <mat-list-item>
-                                    <div class="question-item-answer">
-                                        <mat-form-field floatLabel="always">
-                                            <mat-label style="display: none;">Впишіть відповідь</mat-label>
-                                            <input [disabled]="isChecked.checked" #input placeholder="Впишіть відповідь"
-                                                   matInput>
-                                        </mat-form-field>
-                                        <input #isChecked style="display: none">
-                                        @if (!isChecked.checked) {
-                                            <button
-                                                    mat-icon-button
-                                                    (click)="isChecked.checked = true"
-                                            >
-                                                <mat-icon>task_alt</mat-icon>
-                                            </button>
-                                        } @else {
-                                            <span class="answer">{{ task.correctAnswer }}</span>
-                                            <mat-icon>
-                                                {{ input.value === task.correctAnswer ? 'check' : 'warning' }}
-                                            </mat-icon>
-                                        }
-                                    </div>
-                                </mat-list-item>
-                            </div>
-                        }
-                    </mat-tab>
-                }
-            </mat-tab-group>
-        </mat-list>
-    </div>
-}
+    <button
+      mat-raised-button
+      type="button"
+      class="reset"
+      color="primary"
+      (click)="applySettings()"
+    >
+      Застосувати Фільтри
+    </button>
+  }
+</div>
 
-@if (loading$ | async) {
-    <h5>Зачекайте трохи, ми збираємо данні для того щоб приготувати завдання</h5>
-    <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+@if (grammarTopic.isLoading()) {
+  <h5>Зачекайте трохи, ми збираємо данні для того щоб приготувати завдання</h5>
+  <mat-progress-bar class="page-progress" mode="indeterminate" />
+} @else if (grammarTopic.error()) {
+  <p class="load-error" role="alert">Не вдалося завантажити тему.</p>
+} @else if (grammarTopic.hasValue()) {
+  @let topic = grammarTopic.value();
+  <div class="grammar-topic">
+    <h3>{{ topic.header }}</h3>
+    <h5 [innerHTML]="topic.formation"></h5>
+    <mat-list class="grammar-list-wrapping">
+      <div class="example-list">
+        @for (example of topic.exampleSentences; track $index) {
+          <mat-list-item class="example-item" lines="3">
+            <span matListItemTitle lang="ja">{{ example.sentence }}</span>
+            <span>{{ example.translation }}</span>
+          </mat-list-item>
+        }
+      </div>
+      <mat-tab-group animationDuration="1000ms">
+        @for (type of availableTaskTypes(); track type) {
+          <mat-tab [label]="type | taskTypeRepresentation">
+            @for (task of tasksByType().get(type) ?? []; track $index) {
+              @let userAnswer = checkedAnswers().get(task);
+              <div class="question-item">
+                <mat-list-item>
+                  <span matListItemTitle lang="ja">{{ task.question }}</span>
+                  <span>{{ task.description }}</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <div class="question-item-answer">
+                    <mat-form-field>
+                      <input
+                        #answerInput
+                        matInput
+                        lang="ja"
+                        placeholder="Впишіть відповідь"
+                        aria-label="Впишіть відповідь"
+                        [disabled]="userAnswer !== undefined"
+                        (keydown.enter)="checkAnswer(task, answerInput.value)"
+                      />
+                    </mat-form-field>
+                    @if (userAnswer === undefined) {
+                      <button
+                        mat-icon-button
+                        type="button"
+                        aria-label="Перевірити відповідь"
+                        (click)="checkAnswer(task, answerInput.value)"
+                      >
+                        <mat-icon>task_alt</mat-icon>
+                      </button>
+                    } @else {
+                      <span class="answer" lang="ja">{{
+                        task.correctAnswer
+                      }}</span>
+                      @if (userAnswer === task.correctAnswer) {
+                        <mat-icon aria-label="Правильно">check</mat-icon>
+                      } @else {
+                        <mat-icon aria-label="Неправильно">warning</mat-icon>
+                      }
+                    }
+                  </div>
+                </mat-list-item>
+              </div>
+            }
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </mat-list>
+  </div>
 }

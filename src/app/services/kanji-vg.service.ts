@@ -1,35 +1,21 @@
-import {Injectable} from '@angular/core';
-import {EMPTY, map, Observable} from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import {KANJI_VG_KEYS} from "../shared/const/kanji-vg-keys.const";
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable, of } from 'rxjs';
+import { KANJI_VG_KEYS } from '../shared/const/kanji-vg-keys.const';
 
-@Injectable({
-    providedIn: 'root'
-})
+/** Loads stroke-order SVGs (KanjiVG) shipped in `src/assets/kanji`. */
+@Injectable({ providedIn: 'root' })
 export class KanjiVgService {
-    private readonly kanjiVgKeys: { [key: string]: string[] };
+  private readonly httpClient = inject(HttpClient);
 
-    constructor(private readonly httpClient: HttpClient) {
-        this.kanjiVgKeys = KANJI_VG_KEYS;
+  /** Emits the `<svg>` markup for a kanji, or `''` when there is no SVG. */
+  public getKanjiSvgContent(kanji: string): Observable<string> {
+    const fileName: string | undefined = KANJI_VG_KEYS[kanji]?.[0];
+    if (!fileName) {
+      return of('');
     }
-
-    getKanjiSvgs(kanji: string): string[] {
-        const kanjiKey: string[] | null = this.kanjiVgKeys[kanji];
-        if (kanjiKey)
-            return kanjiKey.map(kanji => `/assets/kanji/${kanji}`);
-        return [];
-    }
-
-    getKanjiSvgContent(kanji: string): Observable<string> {
-        const kanjiKey: string[] | null = this.kanjiVgKeys[kanji];
-        if (kanjiKey && kanjiKey.length)
-            return this.httpClient.get(`/assets/kanji/${kanjiKey[0]}`, {responseType: 'text'}).pipe(map(svgContent => {
-                if (svgContent) {
-                    const parsedValue: RegExpMatchArray | null = svgContent.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
-                    return parsedValue ? parsedValue[0] : '';
-                }
-                return '';
-            }))
-        return EMPTY;
-    }
+    return this.httpClient
+      .get(`/assets/kanji/${fileName}`, { responseType: 'text' })
+      .pipe(map((svg) => svg.match(/<svg[^>]*>[\s\S]*?<\/svg>/)?.[0] ?? ''));
+  }
 }

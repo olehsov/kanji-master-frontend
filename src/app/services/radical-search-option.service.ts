@@ -1,25 +1,20 @@
-import {Injectable} from '@angular/core';
-import {Apollo} from "apollo-angular";
-import {filter, Observable, of, switchMap} from "rxjs";
-import {RADICAL_SEARCH_OPTION_QUERY} from "../queries/radical-search-options.queries";
-import {IRadicalSearchOption} from "../interfaces/radical-search-option.interface";
+import { inject, Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
+import { RADICAL_SEARCH_OPTION_QUERY } from '../queries/radical-search-options.queries';
+import { IRadicalSearchOption } from '../interfaces/radical-search-option.interface';
+import { apolloQuery } from '../shared/utils/apollo-query';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class RadicalSearchOptionService {
-    constructor(private readonly apollo: Apollo) {
-    }
+  private readonly apollo = inject(Apollo);
 
-    public getRadicalSearchOptions(): Observable<IRadicalSearchOption[]> {
-        return this.apollo.watchQuery({query: RADICAL_SEARCH_OPTION_QUERY}).valueChanges.pipe(
-            filter((result) => result.dataState === 'complete'),
-            switchMap(({data, error}) => {
-                if (error) {
-                    throw new Error(error.message)
-                }
-                return of(data.getRadicalSearchOptionDto);
-            })
-        );
-    }
+  public getRadicalSearchOptions(): Observable<IRadicalSearchOption[]> {
+    return apolloQuery(
+      this.apollo,
+      RADICAL_SEARCH_OPTION_QUERY,
+      {},
+      (data) => data.getRadicalSearchOptionDto,
+    );
+  }
 }

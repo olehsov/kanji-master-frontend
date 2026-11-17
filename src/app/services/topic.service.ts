@@ -1,39 +1,34 @@
-import {Injectable} from '@angular/core';
-import {filter, Observable, of, switchMap} from "rxjs";
-import {Apollo} from "apollo-angular";
-import {ITopic} from "../interfaces/topic.interface";
-import {GRAMMAR_TOPIC_QUERY, TOPIC_QUERY} from "../queries/topic.queries";
-import {GrammarTopic} from "../interfaces/grammar-topic.interface";
-import {IGrammarSettingPayload} from "../interfaces/grammar-setting.payload.interface";
+import { inject, Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
+import { ITopic } from '../interfaces/topic.interface';
+import { GRAMMAR_TOPIC_QUERY, TOPIC_QUERY } from '../queries/topic.queries';
+import { GrammarTopic } from '../interfaces/grammar-topic.interface';
+import { IGrammarSettingPayload } from '../interfaces/grammar-setting.payload.interface';
+import { apolloQuery } from '../shared/utils/apollo-query';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class TopicService {
-    constructor(private readonly apollo: Apollo) {
-    }
+  private readonly apollo = inject(Apollo);
 
-    public getAllTopics(): Observable<ITopic[]> {
-        return this.apollo.watchQuery({query: TOPIC_QUERY}).valueChanges.pipe(
-            filter((result) => result.dataState === 'complete'),
-            switchMap(({data, error}) => {
-                if (error) {
-                    throw new Error(error.message)
-                }
-                return of(data.getAllTopics);
-            })
-        );
-    }
+  public getAllTopics(): Observable<ITopic[]> {
+    return apolloQuery(
+      this.apollo,
+      TOPIC_QUERY,
+      {},
+      (data) => data.getAllTopics,
+    );
+  }
 
-    public getGrammarTopic(topicId: number, settings: IGrammarSettingPayload[]): Observable<GrammarTopic> {
-        return this.apollo.watchQuery({query: GRAMMAR_TOPIC_QUERY, variables: {topicId, settings}}).valueChanges.pipe(
-            filter((result) => result.dataState === 'complete'),
-            switchMap(({data, error}) => {
-                if (error) {
-                    throw new Error(error.message)
-                }
-                return of(data.getTopicTask);
-            })
-        );
-    }
+  public getGrammarTopic(
+    topicId: number,
+    settings: IGrammarSettingPayload[],
+  ): Observable<GrammarTopic> {
+    return apolloQuery(
+      this.apollo,
+      GRAMMAR_TOPIC_QUERY,
+      { topicId, settings },
+      (data) => data.getTopicTask,
+    );
+  }
 }

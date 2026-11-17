@@ -1,111 +1,130 @@
-import {ChangeDetectionStrategy, Component, HostListener, OnInit, signal, WritableSignal} from '@angular/core';
-import {BehaviorSubject, debounceTime, EMPTY, map, Observable, of, switchMap} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {KanjiService} from "../../services/kanji.service";
-import {Page} from "../../interfaces/page";
-import {KanjiInfo} from "../../model/kanji-info.model";
-import {GRADE_ITEMS, JLPT_ITEMS} from "./consts/form-filter.const";
-import {KanjiFilter} from "../../interfaces/kanji-filter";
-import {SelectValue} from "../../interfaces/select-value";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  catchError,
+  debounceTime,
+  EMPTY,
+  finalize,
+  map,
+  Subject,
+  switchMap,
+} from 'rxjs';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { KanjiService } from '../../services/kanji.service';
+import { KanjiDto } from '../../model/kanji-info.model';
+import { KanjiFilter } from '../../interfaces/kanji-filter';
+import { GRADE_ITEMS, JLPT_ITEMS } from './consts/form-filter.const';
 
+const BATCH_SIZE = 75;
+const SCROLL_THRESHOLD_PX = 250;
+const FILTER_DEBOUNCE_MS = 1000;
 
+/** Kanji catalogue with filters and infinite scroll. */
 @Component({
-    selector: 'app-kanjies',
-    templateUrl: './kanjies.component.html',
-    styleUrls: ['./kanjies.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-kanjies',
+  templateUrl: './kanjies.component.html',
+  styleUrl: './kanjies.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:scroll)': 'onScroll()' },
+  imports: [
+    ReactiveFormsModule,
+    MatLabel,
+    MatFormField,
+    MatInput,
+    MatSelect,
+    MatOption,
+    MatChipListbox,
+    MatChipOption,
+    RouterLink,
+    MatProgressBar,
+  ],
 })
-export class KanjiesComponent implements OnInit {
-    public kanjies$: Observable<KanjiInfo[]> = EMPTY;
-    public isGradeExpanded: boolean;
-    public readonly loading: WritableSignal<boolean>;
-    public readonly route: ActivatedRoute | null;
-    public readonly jlpt: SelectValue<string>[];
-    public readonly grades: string[];
-    public readonly form: FormGroup;
-    private readonly batchSize: number;
-    private readonly _kanjies$: BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>;
+export class KanjiesComponent {
+  private readonly kanjiService = inject(KanjiService);
 
+  protected readonly jlpt = JLPT_ITEMS;
+  protected readonly grades = GRADE_ITEMS;
+  protected readonly form = inject(NonNullableFormBuilder).group({
+    jlpt: [[] as string[]],
+    grade: [[] as string[]],
+    search: [''],
+  });
 
-    constructor(
-        private readonly kanjiService: KanjiService,
-        private readonly activatedRoute: ActivatedRoute,
-        private readonly fb: FormBuilder
-    ) {
-        this.batchSize = 75;
-        this._kanjies$ = new BehaviorSubject<Page<KanjiInfo> | 'reset' | 'init'>('init');
-        this.loading = signal<boolean>(false);
-        this.route = this.activatedRoute.parent;
-        this.jlpt = JLPT_ITEMS;
-        this.grades = GRADE_ITEMS;
-        this.form = this.fb.group({
-            jlpt: [[]],
-            grade: [[]],
-            search: ''
-        });
-        this.form.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
-            this._kanjies$.next('reset');
-            this._kanjies$.next('init');
-        })
-        this.isGradeExpanded = true;
-    }
+  protected readonly kanjies = signal<KanjiDto[]>([]);
+  protected readonly loading = signal(false);
+  protected readonly error = signal(false);
+  private readonly last = signal(false);
+  private currentPage = 0;
+  private readonly pageRequests = new Subject<number>();
 
-    public ngOnInit(): void {
-        this.kanjies$ = this._kanjies$.asObservable().pipe(
-            switchMap(page => {
-                if (page === 'reset') {
-                    this.loading.set(true);
-                    return of([]);
-                }
-                if (page === 'init') {
-                    this.loading.set(true);
-                    return this.kanjiService.getPage(0, this.batchSize, this.getFilter()).pipe(
-                        map(newPage => {
-                            (this._kanjies$ as any)._value = newPage;
-                            this.loading.set(false);
-                            return newPage.content;
-                        }),
-                    );
-                }
-                this.loading.set(true);
-                return this.kanjiService.getPage(page.number + 1, this.batchSize, this.getFilter()).pipe(
-                    map(newPage => {
-                        const content: KanjiInfo[] = [...page.content, ...newPage.content];
-                        (this._kanjies$ as any)._value = {...newPage, content};
-                        this.loading.set(false);
-                        return content;
-                    }),
-                );
-            })
+  constructor() {
+    this.pageRequests
+      .pipe(
+        switchMap((page) => {
+          this.loading.set(true);
+          this.error.set(false);
+          return this.kanjiService
+            .getPage(page, BATCH_SIZE, this.getFilter())
+            .pipe(
+              map((result) => ({ page, result })),
+              catchError(() => {
+                this.error.set(true);
+                return EMPTY;
+              }),
+              finalize(() => this.loading.set(false)),
+            );
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe(({ page, result }) => {
+        this.kanjies.update((list) =>
+          page === 0 ? result.content : [...list, ...result.content],
         );
-    }
+        this.currentPage = result.number;
+        this.last.set(result.last);
+      });
 
-    @HostListener('window:scroll')
-    onScroll(): void {
-        const page: Page<KanjiInfo> | 'reset' | 'init' = this._kanjies$.getValue();
-        if (this.loading() || page === 'reset' || page === 'init' || page.last) return;
+    this.form.valueChanges
+      .pipe(debounceTime(FILTER_DEBOUNCE_MS), takeUntilDestroyed())
+      .subscribe(() => this.loadFirstPage());
 
-        const documentHeight: number = document.documentElement.scrollHeight;
-        const threshold = 250;
-        const isLoadingRequired: boolean = window.scrollY + window.innerHeight >= documentHeight - threshold;
-        if (isLoadingRequired) {
-            this._kanjies$.next({...page});
-        }
-    }
+    this.loadFirstPage();
+  }
 
-    downloadDpf(): void {
-        const filter: KanjiFilter | null = this.getFilter();
-        this.kanjiService.downloadKanjiPdf(filter).subscribe(() => {
-        });
+  protected onScroll(): void {
+    if (this.loading() || this.last() || this.error()) {
+      return;
     }
+    const documentHeight = document.documentElement.scrollHeight;
+    const nearBottom =
+      window.scrollY + window.innerHeight >=
+      documentHeight - SCROLL_THRESHOLD_PX;
+    if (nearBottom) {
+      this.pageRequests.next(this.currentPage + 1);
+    }
+  }
 
-    private getFilter(): KanjiFilter | null {
-        const filter: KanjiFilter = {...this.form.value};
-        if (filter.jlpt.length || filter.grade.length || filter.search) {
-            return filter;
-        }
-        return null;
-    }
+  protected loadFirstPage(): void {
+    this.kanjies.set([]);
+    this.last.set(false);
+    this.pageRequests.next(0);
+  }
+
+  private getFilter(): KanjiFilter | null {
+    const filter = this.form.getRawValue();
+    return filter.jlpt.length || filter.grade.length || filter.search
+      ? filter
+      : null;
+  }
 }

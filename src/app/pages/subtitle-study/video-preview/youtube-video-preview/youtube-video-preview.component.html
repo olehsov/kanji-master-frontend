@@ -1,37 +1,48 @@
 <div class="video-preview-grid">
-    <div class="youtube-player" id="youtube-player"></div>
-    <div
-            [ngStyle]="{ '--preview-url': 'url(https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg)' }"
-            class="subtitle-area"
-    >
-        @if (youtubePlayer) {
-            @for (subtitleLine of subtitles; track subtitleLine) {
-                <div class="subtitle-item">
-                    <span
-                            class="subtitle-text"
-                            [attr.data-subtitle-runtime-status]="currentTime | subtitleRuntimeStatus : subtitleLine"
-                    >
-                        @for (subtitleSplit of subtitleLine | subtitleLineSplit; track subtitleSplit) {
-                            @if (subtitleSplit.subtitle; as subtitle) {
-                                <span
-                                        class="subtitle-split"
-                                        [matTooltip]="(subtitle.meaning | titlecase) + ' (' + subtitle.jlpt + ')'"
-                                        matTooltipPosition="above"
-                                >
-                                    <span class="sup-hiragana">{{ subtitle.textHiragana }}</span>
-                                    {{ subtitle.text }}
-                                </span>
-                            } @else {
-                                {{ subtitleSplit.text }}
-                            }
-
-                        }
-                    </span>
-                </div>
+  <div #playerHost class="youtube-player-host"></div>
+  <div
+    class="subtitle-area"
+    [style.--preview-url]="
+      'url(https://img.youtube.com/vi/' + youtubeId() + '/hqdefault.jpg)'
+    "
+  >
+    @if (playerReady()) {
+      @for (
+        subtitleLine of subtitles.hasValue() ? subtitles.value() : [];
+        track subtitleLine.index
+      ) {
+        <div class="subtitle-item">
+          <span
+            class="subtitle-text"
+            lang="ja"
+            [attr.data-subtitle-runtime-status]="
+              currentTime() | subtitleRuntimeStatus: subtitleLine
+            "
+          >
+            @for (segment of subtitleLine | subtitleLineSplit; track $index) {
+              @if (segment.subtitle; as subtitle) {
+                <span
+                  class="subtitle-split"
+                  [matTooltip]="
+                    (subtitle.meaning | titlecase) + ' (' + subtitle.jlpt + ')'
+                  "
+                  matTooltipPosition="above"
+                >
+                  <span class="sup-hiragana">{{ subtitle.textHiragana }}</span>
+                  {{ subtitle.text }}
+                </span>
+              } @else {
+                {{ segment.text }}
+              }
             }
-        }
-        @if (loading$ | async) {
-            <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
-        }
-    </div>
+          </span>
+        </div>
+      }
+    }
+    @if (subtitles.isLoading()) {
+      <mat-progress-bar class="page-progress" mode="indeterminate" />
+    } @else if (subtitles.error()) {
+      <p class="load-error" role="alert">Не вдалося отримати субтитри.</p>
+    }
+  </div>
 </div>

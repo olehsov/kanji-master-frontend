@@ -1,30 +1,25 @@
-import {Injectable} from '@angular/core';
-import {Apollo} from "apollo-angular";
-import {filter, Observable, of, switchMap} from "rxjs";
-import {Page} from "../interfaces/page";
-import {ISentence} from "../interfaces/sentence.interface";
-import {SENTENCE_BY_KANJI_PAGE} from "../queries/sentence.queries";
+import { inject, Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
+import { Page } from '../interfaces/page';
+import { ISentence } from '../interfaces/sentence.interface';
+import { SENTENCE_BY_KANJI_PAGE } from '../queries/sentence.queries';
+import { apolloQuery } from '../shared/utils/apollo-query';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SentenceService {
+  private readonly apollo = inject(Apollo);
 
-    constructor(private readonly apollo: Apollo) {
-    }
-
-    public getSentencePageByKanji(page: number, size: number, kanji: string): Observable<Page<ISentence>> {
-        return this.apollo.watchQuery({
-            query: SENTENCE_BY_KANJI_PAGE,
-            variables: {page, size, kanji}
-        }).valueChanges.pipe(
-            filter((result) => result.dataState === 'complete'),
-            switchMap(({data, error}) => {
-                if (error) {
-                    throw new Error(error.message)
-                }
-                return of(data.getSentencesByKanji);
-            })
-        );
-    }
+  public getSentencePageByKanji(
+    page: number,
+    size: number,
+    kanji: string,
+  ): Observable<Page<ISentence>> {
+    return apolloQuery(
+      this.apollo,
+      SENTENCE_BY_KANJI_PAGE,
+      { page, size, kanji },
+      (data) => data.getSentencesByKanji,
+    );
+  }
 }

@@ -1,36 +1,48 @@
 <div [formGroup]="form" class="kanji-filter">
-    <mat-label class="section-header">Канджі
-    </mat-label>
+  <h2 class="section-header">Канджі</h2>
 
-    <mat-form-field>
-        <mat-label>Японська та Ромаджі</mat-label>
-        <input formControlName="search" matInput matNativeControl placeholder="hito or 人">
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Японська та Ромаджі</mat-label>
+    <input formControlName="search" matInput placeholder="hito or 人" />
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Рівень</mat-label>
-        <mat-select [multiple]="true" formControlName="grade">
-            @for (grade of grades; track grade) {
-                <mat-option [value]="grade">{{ grade }}</mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Рівень</mat-label>
+    <mat-select [multiple]="true" formControlName="grade">
+      @for (grade of grades; track grade) {
+        <mat-option [value]="grade">{{ grade }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <mat-chip-listbox [className]="'kanji-attributes'" [multiple]="true" formControlName="jlpt">
-        @for (jlptOption of jlpt; track jlptOption.value) {
-            <mat-chip-option [value]="jlptOption.label">{{ jlptOption.value }}</mat-chip-option>
-        }
-    </mat-chip-listbox>
+  <mat-chip-listbox
+    class="kanji-attributes"
+    [multiple]="true"
+    formControlName="jlpt"
+    aria-label="Рівень JLPT"
+  >
+    @for (jlptOption of jlpt; track jlptOption.value) {
+      <mat-chip-option [value]="jlptOption.label">{{
+        jlptOption.value
+      }}</mat-chip-option>
+    }
+  </mat-chip-listbox>
 </div>
 
 <section class="kanji-container">
-    @for (ji of (kanjies$ | async) || []; track ji.kanji) {
-        <div [relativeTo]="route" class="kanji-card" routerLink="kanji/{{ji.kanji}}">
-            {{ ji.kanji }}
-        </div>
-    }
+  @for (item of kanjies(); track item.kanji) {
+    <a class="kanji-card" lang="ja" [routerLink]="['/kanji', item.kanji]">
+      {{ item.kanji }}
+    </a>
+  }
 
-    @if (loading()) {
-        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
-    }
+  @if (loading()) {
+    <mat-progress-bar class="page-progress" mode="indeterminate" />
+  }
+  @if (error()) {
+    <p class="load-error" role="alert">
+      Не вдалося завантажити канджі.
+      <button type="button" (click)="loadFirstPage()">Спробувати ще раз</button>
+    </p>
+  }
 </section>

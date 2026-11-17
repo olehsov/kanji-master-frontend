@@ -1,81 +1,110 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {debounceTime, EMPTY, map, Observable, of} from "rxjs";
-import {FormControl} from "@angular/forms";
-import {ActivatedRoute} from "@angular/router";
-import {KeyValue} from "@angular/common";
-import {RadicalSearchOptionService} from "../../services/radical-search-option.service";
-import {IRadicalSearchOption} from "../../interfaces/radical-search-option.interface";
-import {KanjiInfo} from "../../model/kanji-info.model";
-import {KanjiService} from "../../services/kanji.service";
-import {SelectValue} from "../../interfaces/select-value";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
+import {
+  rxResource,
+  takeUntilDestroyed,
+  toSignal,
+} from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { KeyValue, KeyValuePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { CdkListbox, CdkOption } from '@angular/cdk/listbox';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { debounceTime, map } from 'rxjs';
+import { RadicalSearchOptionService } from '../../services/radical-search-option.service';
+import { IRadicalSearchOption } from '../../interfaces/radical-search-option.interface';
+import { KanjiService } from '../../services/kanji.service';
+import { SelectValue } from '../../interfaces/select-value';
 
-interface GroupedRadicalsSearchOptions {
-    [key: number]: SelectValue<IRadicalSearchOption | null>[];
+type GroupedRadicalsSearchOptions = Record<
+  number,
+  SelectValue<IRadicalSearchOption>[]
+>;
+
+const SELECTION_DEBOUNCE_MS = 1000;
+
+function groupByStrokes(
+  radicals: IRadicalSearchOption[],
+): GroupedRadicalsSearchOptions {
+  const grouped: GroupedRadicalsSearchOptions = {};
+  for (const radical of radicals) {
+    (grouped[radical.strokes] ??= []).push({
+      label: radical.radical,
+      value: radical,
+    });
+  }
+  return grouped;
 }
 
+/** Find kanji by picking the radicals (components) they contain. */
 @Component({
-    selector: 'app-search-kanji-by-radicals',
-    templateUrl: './search-kanji-by-radicals.component.html',
-    styleUrl: './search-kanji-by-radicals.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-search-kanji-by-radicals',
+  templateUrl: './search-kanji-by-radicals.component.html',
+  styleUrl: './search-kanji-by-radicals.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatIcon,
+    MatIconButton,
+    CdkListbox,
+    ReactiveFormsModule,
+    CdkOption,
+    RouterLink,
+    MatProgressBar,
+    KeyValuePipe,
+  ],
 })
-export class SearchKanjiByRadicalsComponent implements OnInit {
-    public kanjies$: Observable<KanjiInfo[]>;
-    public readonly skeletons: number[];
-    public readonly route: ActivatedRoute | null;
-    public readonly radicalSearchOptions$: Observable<GroupedRadicalsSearchOptions>;
-    public readonly radicalControl: FormControl<IRadicalSearchOption[]>;
+export class SearchKanjiByRadicalsComponent {
+  private readonly radicalSearchOptionService = inject(
+    RadicalSearchOptionService,
+  );
+  private readonly kanjiService = inject(KanjiService);
 
-    constructor(
-        public readonly activatedRoute: ActivatedRoute,
-        private readonly radicalSearchOptionService: RadicalSearchOptionService,
-        private readonly kanjiInfoService: KanjiService,
-        private readonly changeDetectorRef: ChangeDetectorRef
-    ) {
-        this.radicalSearchOptions$ = this.radicalSearchOptionService.getRadicalSearchOptions().pipe(map(radicals => {
-            console.log(radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), {}))
-            return radicals.reduce((accumulator, radical) => this.buildSelectItems(accumulator, radical), {});
-        }));
-        this.kanjies$ = EMPTY;
-        this.radicalControl = new FormControl();
-        this.radicalControl.patchValue([], {emitEvent: false})
-        this.skeletons = Array.from({length: 21}, (_, i) => i);
-        this.route = this.activatedRoute.parent;
-    }
+  protected readonly radicalControl = new FormControl<IRadicalSearchOption[]>(
+    [],
+    { nonNullable: true },
+  );
 
-    public ngOnInit(): void {
-        this.radicalControl.valueChanges.pipe(
-            debounceTime(1000)
-        ).subscribe(options => {
-            console.log(options)
-            const radicals: string[] = options.map(option => option.radical);
-            this.kanjies$ = of([]);
-            this.kanjies$ = this.kanjiInfoService.getKanjiesByRadicals(radicals);
-            this.changeDetectorRef.detectChanges();
-        });
-    }
+  private readonly radicalOptions = rxResource({
+    stream: () => this.radicalSearchOptionService.getRadicalSearchOptions(),
+  });
 
-    onSettingReset(): void {
-        this.radicalControl.reset();
-        this.kanjies$ = of([])
-    }
+  protected readonly groupedRadicals = computed(() =>
+    this.radicalOptions.hasValue()
+      ? groupByStrokes(this.radicalOptions.value())
+      : null,
+  );
+  protected readonly radicalsError = this.radicalOptions.error;
 
-    public sortNumericKeys(a: KeyValue<string, any>, b: KeyValue<string, any>): number {
-        return Number(a.key) - Number(b.key);
-    }
+  /** Selected radical characters, debounced. `undefined` = nothing selected. */
+  private readonly selectedRadicals = toSignal(
+    this.radicalControl.valueChanges.pipe(
+      debounceTime(SELECTION_DEBOUNCE_MS),
+      map((options) =>
+        options?.length ? options.map((option) => option.radical) : undefined,
+      ),
+      takeUntilDestroyed(),
+    ),
+  );
 
-    private buildSelectItems(
-        accumulator: GroupedRadicalsSearchOptions,
-        radical: IRadicalSearchOption
-    ): GroupedRadicalsSearchOptions {
-        const stroke: number = radical.strokes;
+  protected readonly kanjies = rxResource({
+    params: () => this.selectedRadicals(),
+    stream: ({ params }) => this.kanjiService.getKanjiesByRadicals(params),
+  });
 
-        if (accumulator[stroke]) {
-            accumulator[stroke].push({label: radical.radical, value: radical});
-        } else {
-            accumulator[stroke] = [{label: radical.radical, value: radical}];
-        }
-        return accumulator;
-    }
+  protected onSettingReset(): void {
+    this.radicalControl.reset();
+  }
+
+  protected sortNumericKeys(
+    a: KeyValue<string, unknown>,
+    b: KeyValue<string, unknown>,
+  ): number {
+    return Number(a.key) - Number(b.key);
+  }
 }

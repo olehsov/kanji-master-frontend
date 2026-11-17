@@ -1,4 +1,4 @@
 export interface IEnvironment {
-    logoPath: string,
-    apiUrl: string
+  logoPath: string;
+  apiUrl: string;
 }

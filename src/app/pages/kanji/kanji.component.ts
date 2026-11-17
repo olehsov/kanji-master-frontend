@@ -1,40 +1,46 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
-import {Observable, switchMap, tap} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {KanjiService} from "../../services/kanji.service";
-import {KanjiInfo} from "../../model/kanji-info.model";
-import {KanjiVgService} from "../../services/kanji-vg.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { NgTemplateOutlet } from '@angular/common';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { KanjiService } from '../../services/kanji.service';
+import { KanjiVgService } from '../../services/kanji-vg.service';
+import { KanjiDrawingComponent } from './kanji-drawing/kanji-drawing.component';
 
 @Component({
-    selector: 'app-kanji',
-    templateUrl: './kanji.component.html',
-    styleUrls: ['./kanji.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-kanji',
+  templateUrl: './kanji.component.html',
+  styleUrl: './kanji.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    KanjiDrawingComponent,
+    MatChipListbox,
+    MatChipOption,
+    MatTooltip,
+    NgTemplateOutlet,
+    MatProgressBar,
+  ],
 })
 export class KanjiComponent {
-    public readonly kanji$: Observable<KanjiInfo>;
-    public readonly kanjiSvgContent$: Observable<string>;
+  private readonly kanjiService = inject(KanjiService);
+  private readonly kanjiVgService = inject(KanjiVgService);
 
-    constructor(
-        private readonly kanjiService: KanjiService,
-        private readonly activatedRoute: ActivatedRoute,
-        public readonly kanjiVgService: KanjiVgService,
-        private readonly changeDetectorRef: ChangeDetectorRef
-    ) {
-        this.kanji$ = this.activatedRoute.params.pipe(
-            switchMap(({id}) => this.getLoader(String(id))),
-        );
-        this.kanjiSvgContent$ = this.activatedRoute.params.pipe(
-            switchMap(({id}) => this.kanjiVgService.getKanjiSvgContent(String(id))),
-        );
-    }
+  /** Route param `:id` (the kanji character), bound by the router. */
+  public readonly id = input.required<string>();
 
-    private getLoader(kanji: string): Observable<KanjiInfo> {
-        return this.kanjiService.getKanji(kanji).pipe(
-            tap(() => {
-                console.log(document.getElementById('kanji-drawing'));
-            })
-        );
-    }
+  protected readonly kanji = rxResource({
+    params: () => this.id(),
+    stream: ({ params }) => this.kanjiService.getKanji(params),
+  });
+
+  protected readonly kanjiSvg = rxResource({
+    params: () => this.id(),
+    stream: ({ params }) => this.kanjiVgService.getKanjiSvgContent(params),
+  });
 }

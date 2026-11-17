@@ -1,29 +1,52 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {IVideoSubtitleDto} from "../interfaces/video-subtitle-dto.interface";
-import {IIndividualSubtitleTranslationDto} from "../interfaces/Iidividual-subtitle-translation-dto.interface";
+import { Pipe, PipeTransform } from '@angular/core';
+import { IVideoSubtitleDto } from '../interfaces/video-subtitle-dto.interface';
+import { IIndividualSubtitleTranslationDto } from '../interfaces/individual-subtitle-translation-dto.interface';
 
-@Pipe({
-    name: 'subtitleLineSplit',
-    standalone: false
-})
+export interface SubtitleSegment {
+  /** Translation for a known word/phrase; `null` for plain text. */
+  subtitle: IIndividualSubtitleTranslationDto | null;
+  text: string;
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Splits a subtitle line into plain-text and translated segments. */
+export function splitSubtitleLine(
+  subtitle: IVideoSubtitleDto,
+): SubtitleSegment[] {
+  // Copy before sorting: never mutate the input DTO. Longest first, so that
+  // longer phrases win over words they contain.
+  const translations = [...subtitle.individualTranslations]
+    .filter((translation) => translation.text)
+    .sort((a, b) => b.text.length - a.text.length);
+  if (!translations.length) {
+    const text = subtitle.line.trim();
+    return text ? [{ subtitle: null, text }] : [];
+  }
+
+  const byText = new Map(translations.map((t) => [t.text, t]));
+  // Single pass: a capturing group keeps the matched phrases in the result.
+  const pattern = new RegExp(
+    `(${translations.map((t) => escapeRegExp(t.text)).join('|')})`,
+  );
+
+  return subtitle.line
+    .split(pattern)
+    .map((part, i): SubtitleSegment => {
+      // Odd positions are always captured (translated) phrases.
+      const translation = i % 2 === 1 ? byText.get(part) : undefined;
+      return translation
+        ? { subtitle: translation, text: translation.text }
+        : { subtitle: null, text: part.trim() };
+    })
+    .filter((segment) => segment.subtitle !== null || segment.text !== '');
+}
+
+@Pipe({ name: 'subtitleLineSplit' })
 export class SubtitleLineSplitPipe implements PipeTransform {
-
-    transform(subtitle: IVideoSubtitleDto): { subtitle: IIndividualSubtitleTranslationDto, text: string }[] {
-        let line: string = subtitle.line;
-        subtitle.individualTranslations
-            .sort((a, b) => b.text.length - a.text.length)
-            .forEach((sub, idx: number) => line = line.replaceAll(sub.text, `|{${idx}}|`));
-
-        return line.split('|')
-            .filter(item => item.trim() !== '')
-            .map(item => {
-                if (/{\d+}/.test(item)) {
-                    const idx: number = parseInt(item.replace(/[{}]/g, ''), 10);
-                    const selectSubtitle: IIndividualSubtitleTranslationDto = subtitle.individualTranslations[idx]
-                    return {subtitle: selectSubtitle, text: selectSubtitle.text};
-                }
-                return {subtitle: null as any, text: item.trim()};
-            });
-    }
-
+  public transform(subtitle: IVideoSubtitleDto): SubtitleSegment[] {
+    return splitSubtitleLine(subtitle);
+  }
 }

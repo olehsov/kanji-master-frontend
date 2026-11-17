@@ -1,6 +1,6 @@
-import {TaskType} from "./grammar-topic.interface";
+import { TaskType } from './grammar-topic.interface';
 
 export interface IGrammarSettingPayload {
-    type: TaskType;
-    taskAmount: number;
+  type: TaskType;
+  taskAmount: number;
 }

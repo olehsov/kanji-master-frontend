@@ -1,40 +1,63 @@
 <section class="kanji-container">
-    @if (radicalSearchOptions$ | async; as radicalSearchOptions) {
-        <div class="list-box-container">
-            <mat-icon class="clear-button" (click)="onSettingReset()">settings_backup_restore</mat-icon>
-            <ul cdkListbox
-                cdkListboxMultiple
-                [formControl]="radicalControl"
-                class="list-box">
-                @for (keyValue of (radicalSearchOptions | keyvalue : sortNumericKeys); track keyValue) {
-                    <div class="stroke-list-box">
-                        <li class="list-box-option stroke-count" aria-disabled="true"><span>{{ keyValue.key }}</span>
-                        </li>
-                        @for (radical of keyValue.value; track radical.value) {
-                            <li [cdkOption]="radical.value" [cdkOptionDisabled]="radical.disabled"
-                                class="list-box-option">
-                                <span>{{ radical.label }}</span></li>
-                        }
-                    </div>
-                }
-            </ul>
-        </div>
-
-
-        @if (kanjies$ | async; as kanjies) {
-            @for (kanji of kanjies; track kanji.kanji) {
-                <div
-                        [relativeTo]="route"
-                        class="kanji-card"
-                        routerLink="kanji/{{kanji.kanji}}"
-                >
-                    {{ kanji.kanji }}
-                </div>
+  @if (groupedRadicals(); as radicals) {
+    <div class="list-box-container">
+      <button
+        mat-icon-button
+        type="button"
+        class="clear-button"
+        aria-label="Скинути вибрані радикали"
+        (click)="onSettingReset()"
+      >
+        <mat-icon>settings_backup_restore</mat-icon>
+      </button>
+      <ul
+        cdkListbox
+        cdkListboxMultiple
+        [formControl]="radicalControl"
+        aria-label="Радикали за кількістю рисок"
+        class="list-box"
+      >
+        @for (group of radicals | keyvalue: sortNumericKeys; track group.key) {
+          <div class="stroke-list-box" role="group">
+            <li
+              class="list-box-option stroke-count"
+              role="presentation"
+              aria-disabled="true"
+            >
+              <span>{{ group.key }}</span>
+            </li>
+            @for (radical of group.value; track radical.label) {
+              <li
+                [cdkOption]="radical.value"
+                [cdkOptionDisabled]="!!radical.disabled"
+                class="list-box-option"
+                lang="ja"
+              >
+                <span>{{ radical.label }}</span>
+              </li>
             }
-        } @else if (radicalControl.value && radicalControl.value.length) {
-            <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+          </div>
         }
+      </ul>
+    </div>
+
+    @if (kanjies.isLoading()) {
+      <mat-progress-bar class="page-progress" mode="indeterminate" />
+    } @else if (kanjies.error()) {
+      <p class="load-error" role="alert">Не вдалося знайти канджі.</p>
     } @else {
-        <mat-progress-bar [style]="{ marginTop: '1em' }" mode="indeterminate"></mat-progress-bar>
+      @for (
+        item of kanjies.hasValue() ? kanjies.value() : [];
+        track item.kanji
+      ) {
+        <a class="kanji-card" lang="ja" [routerLink]="['/kanji', item.kanji]">
+          {{ item.kanji }}
+        </a>
+      }
     }
+  } @else if (radicalsError()) {
+    <p class="load-error" role="alert">Не вдалося завантажити радикали.</p>
+  } @else {
+    <mat-progress-bar class="page-progress" mode="indeterminate" />
+  }
 </section>

@@ -1,4 +1,4 @@
-@import "src/assets/styles/kanji-card";
+@use 'src/assets/styles/kanji-card' as *;
 
 .kanji-container {
   display: flex;
@@ -60,11 +60,13 @@
       }
     }
 
-    .list-box-option[aria-selected='true'], .list-box-option:hover {
+    .list-box-option[aria-selected='true'],
+    .list-box-option:hover {
       background: rgba(128, 128, 128, 0.6);
     }
 
-    .list-box-option[aria-disabled='true'], .list-box-option[aria-disabled='true']:hover {
+    .list-box-option[aria-disabled='true'],
+    .list-box-option[aria-disabled='true']:hover {
       background: rgba(0, 0, 0, 0.6);
       height: 20px;
       width: 25px;

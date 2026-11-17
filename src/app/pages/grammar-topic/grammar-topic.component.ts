@@ -1,69 +1,136 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {EMPTY, Observable, switchMap, tap} from "rxjs";
-import {FormControl, FormGroup} from "@angular/forms";
-import {MatSlideToggleChange} from "@angular/material/slide-toggle";
-import {LoadingComponent} from "../../shared/abs/loading.component";
-import {TopicService} from "../../services/topic.service";
-import {GrammarTopic, TaskType} from "../../interfaces/grammar-topic.interface";
-import {IGrammarSettingPayload} from "../../interfaces/grammar-setting.payload.interface";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  numberAttribute,
+  signal,
+} from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatSlideToggle,
+  MatSlideToggleChange,
+} from '@angular/material/slide-toggle';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { TopicService } from '../../services/topic.service';
+import { Task, TaskType } from '../../interfaces/grammar-topic.interface';
+import { IGrammarSettingPayload } from '../../interfaces/grammar-setting.payload.interface';
+import { TaskTypeRepresentationPipe } from '../../pipes/task-type-representation.pipe';
 
-interface GrammarTopicSettings {
-    [TaskType.CONVERT_TO_FORMATION]: FormControl<number>;
-    [TaskType.TRANSLATE_TO_JAPANESE]: FormControl<number>;
-    [TaskType.FILL_IN_THE_BLANKS]: FormControl<number>;
-}
+type GrammarTopicSettings = Record<TaskType, FormControl<number>>;
 
+const DEFAULT_TASK_AMOUNT = 3;
+
+/** Grammar topic: explanation, examples and generated exercises. */
 @Component({
-    selector: 'app-grammar-topic',
-    templateUrl: './grammar-topic.component.html',
-    styleUrl: './grammar-topic.component.scss',
-    standalone: false
+  selector: 'app-grammar-topic',
+  templateUrl: './grammar-topic.component.html',
+  styleUrl: './grammar-topic.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatIconButton,
+    MatIcon,
+    ReactiveFormsModule,
+    MatSlider,
+    MatSliderThumb,
+    MatSlideToggle,
+    MatButton,
+    MatList,
+    MatListItem,
+    MatListItemTitle,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatInput,
+    MatProgressBar,
+    TaskTypeRepresentationPipe,
+  ],
 })
-export class GrammarTopicComponent extends LoadingComponent {
-    public grammarTopic$: Observable<GrammarTopic> = EMPTY;
-    public isSettingOpened: boolean;
-    public availableTaskTypes: TaskType[];
-    public readonly taskTypes: TaskType[];
-    public readonly form: FormGroup<GrammarTopicSettings>;
+export class GrammarTopicComponent {
+  private readonly topicService = inject(TopicService);
 
-    constructor(private readonly activatedRoute: ActivatedRoute, private readonly topicService: TopicService) {
-        super();
-        this.taskTypes = Object.values(TaskType);
-        this.availableTaskTypes = [];
-        this.isSettingOpened = false;
-        this.form = new FormGroup<GrammarTopicSettings>({
-            [TaskType.CONVERT_TO_FORMATION]: new FormControl(3),
-            [TaskType.TRANSLATE_TO_JAPANESE]: new FormControl(3),
-            [TaskType.FILL_IN_THE_BLANKS]: new FormControl(3),
-        } as GrammarTopicSettings);
+  /** Route param `:id`, bound by the router. */
+  public readonly id = input.required({ transform: numberAttribute });
 
-        this.grammarTopic$ = this.getGrammarTopic();
+  protected readonly taskTypes: TaskType[] = Object.values(TaskType);
+  protected readonly isSettingOpened = signal(false);
+  protected readonly form = new FormGroup<GrammarTopicSettings>({
+    [TaskType.CONVERT_TO_FORMATION]: this.amountControl(),
+    [TaskType.TRANSLATE_TO_JAPANESE]: this.amountControl(),
+    [TaskType.FILL_IN_THE_BLANKS]: this.amountControl(),
+  });
+
+  /** Settings sent to the backend; updated when "apply" is pressed. */
+  private readonly settings = signal<IGrammarSettingPayload[]>(
+    this.readSettings(),
+  );
+
+  protected readonly grammarTopic = rxResource({
+    params: () => ({ id: this.id(), settings: this.settings() }),
+    stream: ({ params }) =>
+      this.topicService.getGrammarTopic(params.id, params.settings),
+  });
+
+  protected readonly availableTaskTypes = computed(() =>
+    this.settings().map(({ type }) => type),
+  );
+
+  protected readonly tasksByType = computed(() => {
+    const tasks = this.grammarTopic.hasValue()
+      ? this.grammarTopic.value().tasks
+      : [];
+    const byType = new Map<TaskType, Task[]>();
+    for (const task of tasks) {
+      byType.set(task.taskType, [...(byType.get(task.taskType) ?? []), task]);
     }
+    return byType;
+  });
 
-    public formatLabel(value: number): string {
-        return `${value}`;
-    }
+  /** User answers for tasks that were already checked. */
+  protected readonly checkedAnswers = signal(new Map<Task, string>());
 
-    onToggleChanged($event: MatSlideToggleChange, type: TaskType): void {
-        const control: FormControl<number> = this.form.controls[type];
-        $event.checked ? control.enable() : control.disable();
-    }
+  protected formatLabel(value: number): string {
+    return `${value}`;
+  }
 
-    resetGrammars(): void {
-        this.grammarTopic$ = this.getGrammarTopic();
+  protected onToggleChanged(event: MatSlideToggleChange, type: TaskType): void {
+    const control = this.form.controls[type];
+    if (event.checked) {
+      control.enable();
+    } else {
+      control.disable();
     }
+  }
 
-    private getGrammarTopic(): Observable<GrammarTopic> {
-        const payload: IGrammarSettingPayload[] = Object.entries(this.form.value)
-            .map(([type, taskAmount]) => ({type, taskAmount} as IGrammarSettingPayload));
-        this._loading$.next(true);
-        return this.activatedRoute.params.pipe(
-            switchMap(({id}) => this.topicService.getGrammarTopic(Number(id), payload)),
-            tap(() => {
-                this._loading$.next(false);
-                this.availableTaskTypes = payload.map(({type}) => type);
-            })
-        );
-    }
+  protected applySettings(): void {
+    this.checkedAnswers.set(new Map());
+    this.settings.set(this.readSettings());
+  }
+
+  protected checkAnswer(task: Task, answer: string): void {
+    this.checkedAnswers.update((answers) =>
+      new Map(answers).set(task, answer.trim()),
+    );
+  }
+
+  private amountControl(): FormControl<number> {
+    return new FormControl(DEFAULT_TASK_AMOUNT, { nonNullable: true });
+  }
+
+  /** Enabled task types only (disabled controls are excluded from `value`). */
+  private readSettings(): IGrammarSettingPayload[] {
+    return Object.entries(this.form.value).map(([type, taskAmount]) => ({
+      type: type as TaskType,
+      taskAmount: taskAmount as number,
+    }));
+  }
 }

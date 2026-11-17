@@ -1,30 +1,34 @@
-import {Component, Input} from '@angular/core';
-import {EMPTY, Observable} from "rxjs";
-import {Page} from "../../../interfaces/page";
-import {ISentence} from "../../../interfaces/sentence.interface";
-import {SentenceService} from "../../../services/sentence.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { SentenceService } from '../../../services/sentence.service';
 
+const FIRST_PAGE = 1;
+const PAGE_SIZE = 15;
+
+/** Example sentences for a kanji. WORK IN PROGRESS — not used in any page yet. */
 @Component({
-    selector: 'app-sentence-by-kanji',
-    templateUrl: './sentence-by-kanji.component.html',
-    styleUrl: './sentence-by-kanji.component.scss',
-    standalone: false
+  selector: 'app-sentence-by-kanji',
+  templateUrl: './sentence-by-kanji.component.html',
+  styleUrl: './sentence-by-kanji.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SentenceByKanjiComponent {
-    public sentences$: Observable<Page<ISentence>> = EMPTY;
-    private page: number;
-    private size: number;
+  private readonly sentenceService = inject(SentenceService);
 
-    constructor(private readonly sentenceService: SentenceService) {
-        this.page = 1;
-        this.size = 15;
-    }
+  public readonly kanji = input.required<string>();
 
-    private _kanji?: string;
-
-    @Input()
-    set kanji(kanji: string | undefined) {
-        this._kanji = kanji;
-        this.sentences$ = this.sentenceService.getSentencePageByKanji(this.page, this.size, this._kanji as string)
-    }
+  protected readonly sentences = rxResource({
+    params: () => this.kanji(),
+    stream: ({ params }) =>
+      this.sentenceService.getSentencePageByKanji(
+        FIRST_PAGE,
+        PAGE_SIZE,
+        params,
+      ),
+  });
 }

@@ -1,16 +1,12 @@
-@import "src/assets/styles/variables.scss";
-
-::ng-deep {
-  p-skeleton.kanji-card > div {
-    border-radius: 30px;
-    cursor: default;
-  }
-}
+@use "src/assets/styles/variables" as *;
 
 .kanji-container {
   display: flex;
 
   .kanji-card {
+    display: block;
+    color: inherit;
+    line-height: 100px;
     background-color: $table-color;
     border-radius: 30px;
     height: 100px;
@@ -21,7 +17,8 @@
     cursor: pointer;
     margin: 10px;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       color: $background-color;
       background-color: #000000;
       transition: 0.5s;
