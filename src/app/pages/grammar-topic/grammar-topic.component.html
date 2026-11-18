@@ -42,59 +42,66 @@
       <ng-container *ngTemplateOutlet="settingsToggle" />
     </div>
     <ng-container *ngTemplateOutlet="settings" />
-    <mat-tab-group animationDuration="300ms">
-      @for (type of availableTaskTypes(); track type) {
-        <mat-tab [label]="type | taskTypeRepresentation">
-          <div class="task-list">
-            @for (task of tasksByType().get(type) ?? []; track $index) {
-              @let userAnswer = checkedAnswers().get(task);
-              <div class="question-item surface-card">
-                <div class="question-text">
-                  <p class="question" lang="ja">{{ task.question }}</p>
-                  <p class="caption">{{ task.description }}</p>
-                </div>
-                <div class="question-item-answer">
-                  <mat-form-field
-                    appearance="outline"
-                    subscriptSizing="dynamic"
-                  >
-                    <input
-                      #answerInput
-                      matInput
-                      lang="ja"
-                      placeholder="Впишіть відповідь"
-                      aria-label="Впишіть відповідь"
-                      [disabled]="userAnswer !== undefined"
-                      (keydown.enter)="checkAnswer(task, answerInput.value)"
-                    />
-                  </mat-form-field>
-                  @if (userAnswer === undefined) {
-                    <button
-                      mat-icon-button
-                      type="button"
-                      aria-label="Перевірити відповідь"
-                      (click)="checkAnswer(task, answerInput.value)"
+    @if (availableTaskTypes().length === 0) {
+      <p class="no-tasks">
+        Вправи вимкнено. Увімкніть хоча б один тип завдань у налаштуваннях і
+        натисніть «Застосувати фільтри», щоб отримати вправи.
+      </p>
+    } @else {
+      <mat-tab-group animationDuration="300ms">
+        @for (type of availableTaskTypes(); track type) {
+          <mat-tab [label]="type | taskTypeRepresentation">
+            <div class="task-list">
+              @for (task of tasksByType().get(type) ?? []; track $index) {
+                @let userAnswer = checkedAnswers().get(task);
+                <div class="question-item surface-card">
+                  <div class="question-text">
+                    <p class="question" lang="ja">{{ task.question }}</p>
+                    <p class="caption">{{ task.description }}</p>
+                  </div>
+                  <div class="question-item-answer">
+                    <mat-form-field
+                      appearance="outline"
+                      subscriptSizing="dynamic"
                     >
-                      <mat-icon>task_alt</mat-icon>
-                    </button>
-                  } @else if (userAnswer === task.correctAnswer) {
-                    <span class="result correct">
-                      <mat-icon aria-label="Правильно">check</mat-icon>
-                      <span lang="ja">{{ task.correctAnswer }}</span>
-                    </span>
-                  } @else {
-                    <span class="result wrong">
-                      <mat-icon aria-label="Неправильно">close</mat-icon>
-                      <span lang="ja">{{ task.correctAnswer }}</span>
-                    </span>
-                  }
+                      <input
+                        #answerInput
+                        matInput
+                        lang="ja"
+                        placeholder="Впишіть відповідь"
+                        aria-label="Впишіть відповідь"
+                        [disabled]="userAnswer !== undefined"
+                        (keydown.enter)="checkAnswer(task, answerInput.value)"
+                      />
+                    </mat-form-field>
+                    @if (userAnswer === undefined) {
+                      <button
+                        mat-icon-button
+                        type="button"
+                        aria-label="Перевірити відповідь"
+                        (click)="checkAnswer(task, answerInput.value)"
+                      >
+                        <mat-icon>task_alt</mat-icon>
+                      </button>
+                    } @else if (userAnswer === task.correctAnswer) {
+                      <span class="result correct">
+                        <mat-icon aria-label="Правильно">check</mat-icon>
+                        <span lang="ja">{{ task.correctAnswer }}</span>
+                      </span>
+                    } @else {
+                      <span class="result wrong">
+                        <mat-icon aria-label="Неправильно">close</mat-icon>
+                        <span lang="ja">{{ task.correctAnswer }}</span>
+                      </span>
+                    }
+                  </div>
                 </div>
-              </div>
-            }
-          </div>
-        </mat-tab>
-      }
-    </mat-tab-group>
+              }
+            </div>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    }
   </section>
 }
 

@@ -6,7 +6,6 @@ export interface IVideoSubtitleDto {
   timingEnd: string;
   line: string;
   translation: string;
-  videoId?: number;
   kanjies: string;
   grammars: string;
   individualTranslations: IIndividualSubtitleTranslationDto[];

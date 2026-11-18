@@ -27,3 +27,26 @@
   align-items: center;
   gap: var(--km-space-2);
 }
+
+// Footer row of the filter card: PDF export of the filtered list.
+.pdf-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--km-space-2) var(--km-space-3);
+  padding-top: var(--km-space-3);
+  border-top: 1px solid var(--km-border);
+
+  .pdf-download-button mat-icon {
+    margin-right: 6px;
+  }
+}
+
+.pdf-download-progress {
+  width: 12em;
+}
+
+.pdf-download-message {
+  font-size: 14px;
+  color: var(--km-error);
+}

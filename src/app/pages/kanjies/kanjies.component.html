@@ -48,6 +48,33 @@
       }
     </mat-chip-listbox>
   </div>
+
+  <div class="pdf-download">
+    <!-- The wrapper carries the tooltip: a disabled button gets no hover events. -->
+    <span
+      [matTooltip]="hasFilter() ? '' : pdfNoFilterTooltip"
+      matTooltipPosition="above"
+    >
+      <button
+        mat-stroked-button
+        type="button"
+        class="pdf-download-button"
+        [disabled]="!hasFilter() || pdfDownloading()"
+        (click)="downloadPdf()"
+      >
+        <mat-icon aria-hidden="true">{{
+          pdfDownloading() ? 'hourglass_empty' : 'picture_as_pdf'
+        }}</mat-icon>
+        {{ pdfDownloading() ? 'Готуємо PDF…' : 'Завантажити PDF' }}
+      </button>
+    </span>
+    @if (pdfDownloading()) {
+      <mat-progress-bar class="pdf-download-progress" mode="indeterminate" />
+    }
+    @if (pdfMessage(); as message) {
+      <p class="pdf-download-message" role="status">{{ message }}</p>
+    }
+  </div>
 </section>
 
 <section class="kanji-grid" aria-label="Список канджі">

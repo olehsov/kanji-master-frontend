@@ -136,3 +136,12 @@
     color: var(--km-error);
   }
 }
+
+// Shown when every exercise type is switched off in the settings.
+.no-tasks {
+  padding: var(--km-space-4);
+  color: var(--km-muted);
+  text-align: center;
+  border: 1px dashed var(--km-border-control);
+  border-radius: var(--km-radius-lg);
+}
