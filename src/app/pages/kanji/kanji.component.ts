@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { KanjiService } from '../../services/kanji.service';
 import { KanjiVgService } from '../../services/kanji-vg.service';
@@ -20,9 +20,8 @@ import { KanjiDrawingComponent } from './kanji-drawing/kanji-drawing.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     KanjiDrawingComponent,
-    MatChipListbox,
-    MatChipOption,
-    MatTooltip,
+    RouterLink,
+    MatIcon,
     NgTemplateOutlet,
     MatProgressBar,
   ],

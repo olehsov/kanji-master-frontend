@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NgTemplateOutlet } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   MatSlideToggle,
@@ -45,6 +46,7 @@ const DEFAULT_TASK_AMOUNT = 3;
     MatSlideToggle,
     MatButton,
     NgTemplateOutlet,
+    RouterLink,
     MatTabGroup,
     MatTab,
     MatFormField,

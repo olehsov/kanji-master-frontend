@@ -51,10 +51,28 @@
 </section>
 
 <section class="kanji-grid" aria-label="Список канджі">
-  @for (item of kanjies(); track item.kanji) {
-    <a class="kanji-card" lang="ja" [routerLink]="['/kanji', item.kanji]">
-      {{ item.kanji }}
+  @for (tile of tiles(); track tile.kanji) {
+    <a
+      class="kanji-card"
+      [routerLink]="['/kanji', tile.kanji]"
+      [attr.aria-label]="tile.label"
+    >
+      @if (tile.jlpt) {
+        <span class="kanji-card-badge" aria-hidden="true">{{ tile.jlpt }}</span>
+      }
+      <span lang="ja">{{ tile.kanji }}</span>
+      @if (tile.meaning) {
+        <span class="kanji-card-meaning" aria-hidden="true">{{
+          tile.meaning
+        }}</span>
+      }
     </a>
+  } @empty {
+    @if (!loading() && !error()) {
+      <p class="grid-empty caption">
+        Нічого не знайдено. Спробуйте змінити фільтри.
+      </p>
+    }
   }
 
   @if (loading()) {

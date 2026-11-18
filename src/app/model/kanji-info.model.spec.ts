@@ -1,4 +1,4 @@
-import { toKanjiInfo } from './kanji-info.model';
+import { toKanjiInfo, toKanjiTile } from './kanji-info.model';
 import { KANJI_DTO } from '../../testing/kanji-fixtures';
 
 describe('toKanjiInfo', () => {
@@ -28,5 +28,25 @@ describe('toKanjiInfo', () => {
     expect(info.heisigEn).toBe('');
     expect(info.extraMeanings).toEqual([]);
     expect(info.shortWordList).toEqual([]);
+  });
+});
+
+describe('toKanjiTile', () => {
+  it('takes the first meaning and the short JLPT level', () => {
+    expect(toKanjiTile(KANJI_DTO)).toEqual({
+      kanji: KANJI_DTO.kanji,
+      meaning: 'person',
+      jlpt: 'N5',
+      label: `${KANJI_DTO.kanji} — person`,
+    });
+  });
+
+  it('falls back to the bare kanji when there is no meaning', () => {
+    expect(toKanjiTile({ kanji: '人' })).toEqual({
+      kanji: '人',
+      meaning: '',
+      jlpt: '',
+      label: '人',
+    });
   });
 });

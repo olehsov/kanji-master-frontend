@@ -60,3 +60,24 @@ export function toKanjiInfo(dto: KanjiDto): KanjiInfo {
       .slice(0, MAX_EXAMPLE_WORDS),
   };
 }
+
+/** Compact shape for a kanji tile in grids (list, radical search). */
+export interface KanjiTile {
+  kanji: string;
+  /** First meaning, or '' when the API didn't send one. */
+  meaning: string;
+  /** JLPT level without the description, e.g. `N2`. */
+  jlpt: string;
+  /** Accessible name: kanji plus meaning. */
+  label: string;
+}
+
+export function toKanjiTile(dto: KanjiDto): KanjiTile {
+  const meaning = dto.meaning?.split(';')[0]?.trim() ?? '';
+  return {
+    kanji: dto.kanji,
+    meaning,
+    jlpt: dto.jlpt ? withoutBrackets(dto.jlpt) : '',
+    label: meaning ? `${dto.kanji} — ${meaning}` : dto.kanji,
+  };
+}

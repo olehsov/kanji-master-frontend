@@ -36,6 +36,23 @@
   }
 }
 
+.section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--km-space-2);
+  margin-bottom: var(--km-space-4);
+
+  .section-title {
+    margin-bottom: 0;
+  }
+
+  .setting mat-icon {
+    margin-right: 6px;
+  }
+}
+
 .example-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));

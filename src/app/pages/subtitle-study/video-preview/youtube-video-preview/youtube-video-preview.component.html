@@ -1,11 +1,6 @@
 <div class="video-preview-grid">
   <div #playerHost class="youtube-player-host"></div>
-  <div
-    class="subtitle-area"
-    [style.--preview-url]="
-      'url(https://img.youtube.com/vi/' + youtubeId() + '/hqdefault.jpg)'
-    "
-  >
+  <section class="subtitle-area" aria-label="Субтитри">
     @if (playerReady()) {
       @for (
         subtitleLine of subtitles.hasValue() ? subtitles.value() : [];
@@ -21,16 +16,17 @@
           >
             @for (segment of subtitleLine | subtitleLineSplit; track $index) {
               @if (segment.subtitle; as subtitle) {
-                <span
+                <ruby
                   class="subtitle-split"
+                  tabindex="0"
                   [matTooltip]="
                     (subtitle.meaning | titlecase) + ' (' + subtitle.jlpt + ')'
                   "
                   matTooltipPosition="above"
+                  >{{ subtitle.text }}<rp>(</rp
+                  ><rt>{{ subtitle.textHiragana }}</rt
+                  ><rp>)</rp></ruby
                 >
-                  <span class="sup-hiragana">{{ subtitle.textHiragana }}</span>
-                  {{ subtitle.text }}
-                </span>
               } @else {
                 {{ segment.text }}
               }
@@ -44,5 +40,5 @@
     } @else if (subtitles.error()) {
       <p class="load-error" role="alert">Не вдалося отримати субтитри.</p>
     }
-  </div>
+  </section>
 </div>

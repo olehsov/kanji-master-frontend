@@ -37,8 +37,8 @@
 
 .logo {
   display: block;
-  height: 40px;
-  width: 40px;
+  height: 44px;
+  width: 44px;
 }
 
 nav {
@@ -59,13 +59,14 @@ nav {
   transition: text-decoration-color 0.2s ease;
   white-space: nowrap;
 
-  &:hover,
-  &.active {
-    text-decoration-color: currentColor;
+  &:hover {
+    text-decoration-color: var(--km-border-interactive);
   }
 
+  // Underline only: a weight change would shift the menu sideways.
   &.active {
-    font-weight: 600;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
   }
 }
 
@@ -78,7 +79,7 @@ nav {
   padding: 0;
   color: var(--km-charcoal);
   background: var(--km-cream);
-  border: 1px solid var(--km-border-interactive);
+  border: 1px solid var(--km-border-control);
   border-radius: var(--km-radius-sm);
   cursor: pointer;
 

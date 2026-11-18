@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -23,7 +24,7 @@ import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
 import { KanjiService } from '../../services/kanji.service';
-import { KanjiDto } from '../../model/kanji-info.model';
+import { KanjiDto, toKanjiTile } from '../../model/kanji-info.model';
 import { KanjiFilter } from '../../interfaces/kanji-filter';
 import { GRADE_ITEMS, JLPT_ITEMS } from './consts/form-filter.const';
 
@@ -64,6 +65,7 @@ export class KanjiesComponent {
   });
 
   protected readonly kanjies = signal<KanjiDto[]>([]);
+  protected readonly tiles = computed(() => this.kanjies().map(toKanjiTile));
   protected readonly loading = signal(false);
   protected readonly error = signal(false);
   private readonly last = signal(false);

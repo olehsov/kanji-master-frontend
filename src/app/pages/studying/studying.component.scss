@@ -16,18 +16,18 @@
   transition: border-color 0.2s ease;
 
   &:hover {
-    border-color: var(--km-border-interactive);
+    border-color: var(--km-border-control);
   }
 
-  mat-card-header {
-    flex: 1;
-  }
+  height: 100%;
 
   mat-card-subtitle {
     margin-top: var(--km-space-1);
   }
 
+  // Pin the action to the bottom so buttons line up across a row.
   mat-card-actions {
+    margin-top: auto;
     padding: var(--km-space-3);
   }
 }

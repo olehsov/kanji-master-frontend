@@ -15,6 +15,8 @@ export const KANJI_SHORT_FILTERED_PAGE: TypedDocumentNode<
     getKanjis(page: $page, size: $size, filter: $filter) {
       content {
         kanji
+        meaning
+        jlpt
       }
       number
       last
@@ -31,6 +33,8 @@ export const KANJI_SHORT_PAGE: TypedDocumentNode<
     getKanjis(page: $page, size: $size) {
       content {
         kanji
+        meaning
+        jlpt
       }
       number
       last
@@ -46,6 +50,8 @@ export const KANJIES_BY_RADICALS: TypedDocumentNode<
   query ($radicals: [String]) {
     getKanjiesByRadical(radicals: $radicals) {
       kanji
+      meaning
+      jlpt
     }
   }
 `;

@@ -7,14 +7,22 @@
   <p class="load-error" role="alert">Не вдалося завантажити тему.</p>
 } @else if (grammarTopic.hasValue()) {
   @let topic = grammarTopic.value();
+  <a class="back-link" routerLink="/studying">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    Усі теми
+  </a>
   <header class="page-header">
     <div class="page-header-text">
       <h1>{{ topic.header }}</h1>
-      <p class="page-subtitle formation" [innerHTML]="topic.formation"></p>
     </div>
-    <ng-container *ngTemplateOutlet="settingsToggle" />
   </header>
-  <ng-container *ngTemplateOutlet="settings" />
+
+  @if (topic.formation) {
+    <section class="topic-section">
+      <h2 class="section-title">Як утворюється</h2>
+      <div class="formation surface-card" [innerHTML]="topic.formation"></div>
+    </section>
+  }
 
   <section class="topic-section">
     <h2 class="section-title">Приклади</h2>
@@ -29,7 +37,11 @@
   </section>
 
   <section class="topic-section">
-    <h2 class="section-title">Вправи</h2>
+    <div class="section-heading">
+      <h2 class="section-title">Вправи</h2>
+      <ng-container *ngTemplateOutlet="settingsToggle" />
+    </div>
+    <ng-container *ngTemplateOutlet="settings" />
     <mat-tab-group animationDuration="300ms">
       @for (type of availableTaskTypes(); track type) {
         <mat-tab [label]="type | taskTypeRepresentation">
@@ -88,15 +100,15 @@
 
 <ng-template #settingsToggle>
   <button
-    mat-icon-button
+    mat-stroked-button
     type="button"
     class="setting"
-    aria-label="Налаштування завдань"
     aria-controls="grammar-settings"
     [attr.aria-expanded]="isSettingOpened()"
     (click)="isSettingOpened.set(!isSettingOpened())"
   >
-    <mat-icon>tune</mat-icon>
+    <mat-icon aria-hidden="true">tune</mat-icon>
+    Налаштувати вправи
   </button>
 </ng-template>
 

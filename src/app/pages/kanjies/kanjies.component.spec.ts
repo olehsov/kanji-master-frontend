@@ -20,7 +20,10 @@ describe('KanjiesComponent', () => {
   it('renders the first page as links', async () => {
     const fixture = setup(() =>
       of({
-        content: [{ kanji: '人' }, { kanji: '日' }],
+        content: [
+          { kanji: '人', meaning: 'person;people', jlpt: 'N5 (beginner)' },
+          { kanji: '日' },
+        ],
         number: 0,
         last: true,
         first: true,
@@ -30,8 +33,16 @@ describe('KanjiesComponent', () => {
     const cards = (fixture.nativeElement as HTMLElement).querySelectorAll(
       'a.kanji-card',
     );
-    expect([...cards].map((c) => c.textContent?.trim())).toEqual(['人', '日']);
+    expect(
+      [...cards].map((c) => c.querySelector('[lang="ja"]')?.textContent),
+    ).toEqual(['人', '日']);
     expect(cards[0].getAttribute('href')).toBe('/kanji/%E4%BA%BA');
+    expect(cards[0].getAttribute('aria-label')).toBe('人 — person');
+    expect(cards[0].querySelector('.kanji-card-meaning')?.textContent).toBe(
+      'person',
+    );
+    expect(cards[0].querySelector('.kanji-card-badge')?.textContent).toBe('N5');
+    expect(cards[1].getAttribute('aria-label')).toBe('日');
   });
 
   it('shows an error instead of spinning forever', async () => {

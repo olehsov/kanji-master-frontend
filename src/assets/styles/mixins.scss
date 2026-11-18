@@ -15,8 +15,9 @@
   }
 }
 
-/// Soft, diffused focus indicator (no sharp outline).
+/// Keyboard focus indicator: 2px charcoal ring (offset) + soft glow.
+/// Visible on every surface; required for WCAG 2.4.7.
 @mixin focus-ring {
   outline: none;
-  box-shadow: var(--km-shadow-focus);
+  box-shadow: var(--km-focus-ring);
 }
