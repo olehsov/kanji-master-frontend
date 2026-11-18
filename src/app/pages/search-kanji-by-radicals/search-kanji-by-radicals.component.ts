@@ -14,7 +14,7 @@ import { KeyValue, KeyValuePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CdkListbox, CdkOption } from '@angular/cdk/listbox';
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { debounceTime, map } from 'rxjs';
 import { RadicalSearchOptionService } from '../../services/radical-search-option.service';
@@ -50,7 +50,7 @@ function groupByStrokes(
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIcon,
-    MatIconButton,
+    MatButton,
     CdkListbox,
     ReactiveFormsModule,
     CdkOption,

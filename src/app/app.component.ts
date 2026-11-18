@@ -5,7 +5,6 @@ import { TopBarComponent } from './shared/default-app-components/top-bar/top-bar
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, TopBarComponent],
 })

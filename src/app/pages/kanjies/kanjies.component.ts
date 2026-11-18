@@ -21,6 +21,7 @@ import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatButton } from '@angular/material/button';
 import { KanjiService } from '../../services/kanji.service';
 import { KanjiDto } from '../../model/kanji-info.model';
 import { KanjiFilter } from '../../interfaces/kanji-filter';
@@ -48,6 +49,7 @@ const FILTER_DEBOUNCE_MS = 1000;
     MatChipOption,
     RouterLink,
     MatProgressBar,
+    MatButton,
   ],
 })
 export class KanjiesComponent {

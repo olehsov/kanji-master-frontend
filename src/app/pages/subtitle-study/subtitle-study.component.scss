@@ -1,36 +1,40 @@
+@use 'src/assets/styles/mixins' as *;
+
 $icon-path: '/assets/images';
 $icons: spotify, youtube, upload;
 
-.video-input-container {
+.subtitle-study-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  gap: 1em;
-
-  .url-field-input {
-    min-width: 70%;
-  }
+  flex-direction: column;
+  gap: var(--km-space-5);
 }
 
-mat-form-field,
-mat-button-toggle-group,
-mat-button-toggle {
-  width: 100%;
+.video-input-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--km-space-3);
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  @include below(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .select-media-type {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: 1em;
+  align-items: center;
+  gap: var(--km-space-2);
 
   i.select-media-type-icon {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
     background-size: cover;
+    border-radius: var(--km-radius-xs);
     @each $icon in $icons {
       &[data-icon='#{$icon}'] {
         background-image: url('#{$icon-path}/#{$icon}.png');

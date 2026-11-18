@@ -1,7 +1,27 @@
+@use 'src/assets/styles/mixins' as *;
+
 .drawing-container {
+  display: block;
   max-width: fit-content;
+  padding: var(--km-space-1);
   cursor: pointer;
-  background: none;
-  border: 0;
-  padding: 0;
+  background: var(--km-cream);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-lg);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--km-border-interactive);
+    background: var(--km-tint-4);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
 }

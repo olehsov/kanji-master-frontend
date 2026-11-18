@@ -1,127 +1,127 @@
-.kanji-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+@use 'src/assets/styles/mixins' as *;
+
+.kanji-detail {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--km-space-4);
 }
 
-.kanji-card {
-  padding: 2rem;
-  border-radius: 10px;
-}
+.kanji-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--km-space-6);
+  padding: var(--km-space-6);
+  border-radius: var(--km-radius-xl);
 
-.kanji-header {
-  text-align: center;
-  margin-bottom: 2rem;
-
-  .kanji-with-drawing {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
+  @include below(md) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--km-space-4);
+    padding: var(--km-space-4);
+    text-align: center;
   }
 }
 
-.kanji-header h1 {
-  font-size: 5rem;
-  margin: 0;
-  color: #333;
+.kanji-glyphs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--km-space-4);
+  flex-shrink: 0;
 }
 
-.kanji-header h3 {
-  font-size: 2rem;
-  color: #666;
-  margin-top: 0.5rem;
+.kanji-glyph {
+  font-size: 128px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: normal;
+
+  @include below(md) {
+    font-size: 96px;
+  }
 }
 
-.kanji-header p {
-  margin: 1rem 0;
+.kanji-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--km-space-2);
+  min-width: 0;
+
+  h2 {
+    text-transform: capitalize;
+  }
+
+  .kanji-attributes {
+    margin-top: var(--km-space-1);
+  }
+
+  @include below(md) {
+    align-items: center;
+  }
 }
 
 .kanji-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--km-space-4);
+
+  @include below(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .kanji-section {
-  flex: 1 1 calc(50% - 2rem);
-  min-width: 300px;
-}
-
-.kanji-section.full-width {
-  flex: 1 1 100%;
-  min-width: 100%;
-}
-
-.kanji-section h4 {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.kanji-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  gap: var(--km-space-3);
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.tag-list {
+  display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-}
-
-.kanji-section ul li {
-  padding: 0.5rem 0;
-  width: 50%;
-  border-bottom: 1px solid #eee;
-  color: #555;
-}
-
-.kanji-section ul li:last-child {
-  border-bottom: none;
-}
-
-/* kanji-detail.component.css */
-.words-section {
-  margin-top: 20px;
+  gap: var(--km-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .word-list {
-  list-style-type: none;
-  padding: 0;
   margin: 0;
-}
-
-.word-item {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.word-item h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 1.2em;
-}
-
-.variant-list {
-  list-style-type: none;
   padding: 0;
-  margin: 10px 0 0 0;
+  list-style: none;
 }
 
-.variant-list li {
-  margin-bottom: 5px;
-  color: #666;
+.word-row {
+  display: grid;
+  grid-template-columns: minmax(80px, auto) minmax(120px, auto) 1fr;
+  align-items: baseline;
+  gap: var(--km-space-3);
+  padding: var(--km-space-2) 0;
+  border-bottom: 1px solid var(--km-border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  @include below(sm) {
+    grid-template-columns: auto 1fr;
+
+    .word-translation {
+      grid-column: 1 / -1;
+    }
+  }
 }
 
-.variant-written {
-  font-weight: bold;
+.word {
+  font-size: 20px;
 }
 
-.variant-pronounced {
-  color: #888;
+.word-translation {
+  color: var(--km-text-body);
 }

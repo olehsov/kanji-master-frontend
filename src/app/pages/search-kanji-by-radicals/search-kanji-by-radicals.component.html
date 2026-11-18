@@ -1,46 +1,58 @@
-<section class="kanji-container">
-  @if (groupedRadicals(); as radicals) {
-    <div class="list-box-container">
-      <button
-        mat-icon-button
-        type="button"
-        class="clear-button"
-        aria-label="Скинути вибрані радикали"
-        (click)="onSettingReset()"
-      >
-        <mat-icon>settings_backup_restore</mat-icon>
-      </button>
-      <ul
-        cdkListbox
-        cdkListboxMultiple
-        [formControl]="radicalControl"
-        aria-label="Радикали за кількістю рисок"
-        class="list-box"
-      >
-        @for (group of radicals | keyvalue: sortNumericKeys; track group.key) {
-          <div class="stroke-list-box" role="group">
-            <li
-              class="list-box-option stroke-count"
-              role="presentation"
-              aria-disabled="true"
-            >
-              <span>{{ group.key }}</span>
-            </li>
-            @for (radical of group.value; track radical.label) {
-              <li
-                [cdkOption]="radical.value"
-                [cdkOptionDisabled]="!!radical.disabled"
-                class="list-box-option"
-                lang="ja"
-              >
-                <span>{{ radical.label }}</span>
-              </li>
-            }
-          </div>
-        }
-      </ul>
-    </div>
+<header class="page-header">
+  <div class="page-header-text">
+    <h1>Пошук за радикалами</h1>
+    <p class="page-subtitle">
+      Оберіть складові ієрогліфа: список канджі звузиться до тих, що містять усі
+      вибрані радикали.
+    </p>
+  </div>
+  @if (groupedRadicals()) {
+    <button
+      mat-stroked-button
+      type="button"
+      class="clear-button"
+      (click)="onSettingReset()"
+    >
+      <mat-icon aria-hidden="true">settings_backup_restore</mat-icon>
+      Скинути вибір
+    </button>
+  }
+</header>
 
+@if (groupedRadicals(); as radicals) {
+  <section class="radical-picker surface-card">
+    <ul
+      cdkListbox
+      cdkListboxMultiple
+      [formControl]="radicalControl"
+      aria-label="Радикали за кількістю рисок"
+      class="list-box"
+    >
+      @for (group of radicals | keyvalue: sortNumericKeys; track group.key) {
+        <div class="stroke-list-box" role="group">
+          <li
+            class="list-box-option stroke-count"
+            role="presentation"
+            aria-disabled="true"
+          >
+            <span>{{ group.key }}</span>
+          </li>
+          @for (radical of group.value; track radical.label) {
+            <li
+              [cdkOption]="radical.value"
+              [cdkOptionDisabled]="!!radical.disabled"
+              class="list-box-option"
+              lang="ja"
+            >
+              <span>{{ radical.label }}</span>
+            </li>
+          }
+        </div>
+      }
+    </ul>
+  </section>
+
+  <section class="kanji-grid results" aria-label="Знайдені канджі">
     @if (kanjies.isLoading()) {
       <mat-progress-bar class="page-progress" mode="indeterminate" />
     } @else if (kanjies.error()) {
@@ -55,9 +67,9 @@
         </a>
       }
     }
-  } @else if (radicalsError()) {
-    <p class="load-error" role="alert">Не вдалося завантажити радикали.</p>
-  } @else {
-    <mat-progress-bar class="page-progress" mode="indeterminate" />
-  }
-</section>
+  </section>
+} @else if (radicalsError()) {
+  <p class="load-error" role="alert">Не вдалося завантажити радикали.</p>
+} @else {
+  <mat-progress-bar class="page-progress" mode="indeterminate" />
+}

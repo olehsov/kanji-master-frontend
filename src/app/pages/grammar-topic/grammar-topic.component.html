@@ -1,122 +1,146 @@
-<div class="grammar-settings">
-  <button
-    mat-icon-button
-    type="button"
-    class="setting"
-    aria-label="Налаштування завдань"
-    [attr.aria-expanded]="isSettingOpened()"
-    (click)="isSettingOpened.set(!isSettingOpened())"
-  >
-    <mat-icon>settings</mat-icon>
-  </button>
-  @if (isSettingOpened()) {
-    <div class="setting-values" [formGroup]="form">
-      @for (type of taskTypes; track type) {
-        <div class="type-range">
-          <mat-slider
-            [displayWith]="formatLabel"
-            min="1"
-            max="10"
-            step="1"
-            showTickMarks
-            discrete
-          >
-            <input
-              [formControlName]="type"
-              matSliderThumb
-              [attr.aria-label]="type | taskTypeRepresentation"
-            />
-          </mat-slider>
-          <mat-slide-toggle
-            color="primary"
-            [checked]="form.controls[type].enabled"
-            (change)="onToggleChanged($event, type)"
-          >
-            Ввімкнути {{ type | taskTypeRepresentation }}
-          </mat-slide-toggle>
-        </div>
-      }
-    </div>
-    <button
-      mat-raised-button
-      type="button"
-      class="reset"
-      color="primary"
-      (click)="applySettings()"
-    >
-      Застосувати Фільтри
-    </button>
-  }
-</div>
-
 @if (grammarTopic.isLoading()) {
-  <h5>Зачекайте трохи, ми збираємо данні для того щоб приготувати завдання</h5>
+  <p class="caption">
+    Зачекайте трохи, ми збираємо дані для того, щоб приготувати завдання
+  </p>
   <mat-progress-bar class="page-progress" mode="indeterminate" />
 } @else if (grammarTopic.error()) {
   <p class="load-error" role="alert">Не вдалося завантажити тему.</p>
 } @else if (grammarTopic.hasValue()) {
   @let topic = grammarTopic.value();
-  <div class="grammar-topic">
-    <h3>{{ topic.header }}</h3>
-    <h5 [innerHTML]="topic.formation"></h5>
-    <mat-list class="grammar-list-wrapping">
-      <div class="example-list">
-        @for (example of topic.exampleSentences; track $index) {
-          <mat-list-item class="example-item" lines="3">
-            <span matListItemTitle lang="ja">{{ example.sentence }}</span>
-            <span>{{ example.translation }}</span>
-          </mat-list-item>
-        }
-      </div>
-      <mat-tab-group animationDuration="1000ms">
-        @for (type of availableTaskTypes(); track type) {
-          <mat-tab [label]="type | taskTypeRepresentation">
+  <header class="page-header">
+    <div class="page-header-text">
+      <h1>{{ topic.header }}</h1>
+      <p class="page-subtitle formation" [innerHTML]="topic.formation"></p>
+    </div>
+    <ng-container *ngTemplateOutlet="settingsToggle" />
+  </header>
+  <ng-container *ngTemplateOutlet="settings" />
+
+  <section class="topic-section">
+    <h2 class="section-title">Приклади</h2>
+    <ul class="example-list">
+      @for (example of topic.exampleSentences; track $index) {
+        <li class="example-item surface-card">
+          <p class="example-sentence" lang="ja">{{ example.sentence }}</p>
+          <p class="caption">{{ example.translation }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="topic-section">
+    <h2 class="section-title">Вправи</h2>
+    <mat-tab-group animationDuration="300ms">
+      @for (type of availableTaskTypes(); track type) {
+        <mat-tab [label]="type | taskTypeRepresentation">
+          <div class="task-list">
             @for (task of tasksByType().get(type) ?? []; track $index) {
               @let userAnswer = checkedAnswers().get(task);
-              <div class="question-item">
-                <mat-list-item>
-                  <span matListItemTitle lang="ja">{{ task.question }}</span>
-                  <span>{{ task.description }}</span>
-                </mat-list-item>
-                <mat-list-item>
-                  <div class="question-item-answer">
-                    <mat-form-field>
-                      <input
-                        #answerInput
-                        matInput
-                        lang="ja"
-                        placeholder="Впишіть відповідь"
-                        aria-label="Впишіть відповідь"
-                        [disabled]="userAnswer !== undefined"
-                        (keydown.enter)="checkAnswer(task, answerInput.value)"
-                      />
-                    </mat-form-field>
-                    @if (userAnswer === undefined) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        aria-label="Перевірити відповідь"
-                        (click)="checkAnswer(task, answerInput.value)"
-                      >
-                        <mat-icon>task_alt</mat-icon>
-                      </button>
-                    } @else {
-                      <span class="answer" lang="ja">{{
-                        task.correctAnswer
-                      }}</span>
-                      @if (userAnswer === task.correctAnswer) {
-                        <mat-icon aria-label="Правильно">check</mat-icon>
-                      } @else {
-                        <mat-icon aria-label="Неправильно">warning</mat-icon>
-                      }
-                    }
-                  </div>
-                </mat-list-item>
+              <div class="question-item surface-card">
+                <div class="question-text">
+                  <p class="question" lang="ja">{{ task.question }}</p>
+                  <p class="caption">{{ task.description }}</p>
+                </div>
+                <div class="question-item-answer">
+                  <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic"
+                  >
+                    <input
+                      #answerInput
+                      matInput
+                      lang="ja"
+                      placeholder="Впишіть відповідь"
+                      aria-label="Впишіть відповідь"
+                      [disabled]="userAnswer !== undefined"
+                      (keydown.enter)="checkAnswer(task, answerInput.value)"
+                    />
+                  </mat-form-field>
+                  @if (userAnswer === undefined) {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      aria-label="Перевірити відповідь"
+                      (click)="checkAnswer(task, answerInput.value)"
+                    >
+                      <mat-icon>task_alt</mat-icon>
+                    </button>
+                  } @else if (userAnswer === task.correctAnswer) {
+                    <span class="result correct">
+                      <mat-icon aria-label="Правильно">check</mat-icon>
+                      <span lang="ja">{{ task.correctAnswer }}</span>
+                    </span>
+                  } @else {
+                    <span class="result wrong">
+                      <mat-icon aria-label="Неправильно">close</mat-icon>
+                      <span lang="ja">{{ task.correctAnswer }}</span>
+                    </span>
+                  }
+                </div>
               </div>
             }
-          </mat-tab>
-        }
-      </mat-tab-group>
-    </mat-list>
-  </div>
+          </div>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  </section>
 }
+
+<ng-template #settingsToggle>
+  <button
+    mat-icon-button
+    type="button"
+    class="setting"
+    aria-label="Налаштування завдань"
+    aria-controls="grammar-settings"
+    [attr.aria-expanded]="isSettingOpened()"
+    (click)="isSettingOpened.set(!isSettingOpened())"
+  >
+    <mat-icon>tune</mat-icon>
+  </button>
+</ng-template>
+
+<ng-template #settings>
+  @if (isSettingOpened()) {
+    <section
+      id="grammar-settings"
+      class="grammar-settings surface-card"
+      aria-label="Налаштування завдань"
+    >
+      <div class="setting-values" [formGroup]="form">
+        @for (type of taskTypes; track type) {
+          <div class="type-range">
+            <mat-slide-toggle
+              [checked]="form.controls[type].enabled"
+              (change)="onToggleChanged($event, type)"
+            >
+              {{ type | taskTypeRepresentation }}
+            </mat-slide-toggle>
+            <mat-slider
+              [displayWith]="formatLabel"
+              min="1"
+              max="10"
+              step="1"
+              showTickMarks
+              discrete
+            >
+              <input
+                [formControlName]="type"
+                matSliderThumb
+                [attr.aria-label]="type | taskTypeRepresentation"
+              />
+            </mat-slider>
+          </div>
+        }
+      </div>
+      <button
+        mat-flat-button
+        type="button"
+        class="reset"
+        (click)="applySettings()"
+      >
+        Застосувати фільтри
+      </button>
+    </section>
+  }
+</ng-template>

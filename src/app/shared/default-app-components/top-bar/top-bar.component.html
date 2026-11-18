@@ -1,24 +1,45 @@
-<header>
-  <a routerLink="/kanji" aria-label="Kanji Master — на головну">
-    <img
-      [ngSrc]="logoPath"
-      alt="Kanji Master"
-      class="logo"
-      height="137"
-      width="300"
-    />
-  </a>
-  <nav aria-label="Основна навігація">
-    @for (item of menuItems; track item.routerLink) {
-      <a
-        mat-button
-        [routerLink]="item.routerLink"
-        class="dropped-background page-button"
-        routerLinkActive="active-page"
-        ariaCurrentWhenActive="page"
-      >
-        {{ item.label }}
-      </a>
-    }
-  </nav>
+<header class="top-bar">
+  <div class="top-bar-inner">
+    <a
+      routerLink="/kanji"
+      class="brand"
+      aria-label="Kanji Master — на головну"
+      (click)="closeMenu()"
+    >
+      <img
+        [ngSrc]="logoPath"
+        alt="Kanji Master"
+        class="logo"
+        height="80"
+        width="80"
+      />
+    </a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-controls="main-nav"
+      [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="menuOpen() ? 'Закрити меню' : 'Відкрити меню'"
+      (click)="menuOpen.set(!menuOpen())"
+    >
+      <mat-icon aria-hidden="true">{{
+        menuOpen() ? 'close' : 'menu'
+      }}</mat-icon>
+    </button>
+
+    <nav id="main-nav" aria-label="Основна навігація" [class.open]="menuOpen()">
+      @for (item of menuItems; track item.routerLink) {
+        <a
+          class="nav-link"
+          [routerLink]="item.routerLink"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="closeMenu()"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </div>
 </header>

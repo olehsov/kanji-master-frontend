@@ -1,68 +1,459 @@
+@use '@angular/material' as mat;
+@use 'src/assets/styles/tokens';
 @use 'src/assets/styles/mixins' as *;
 @use 'src/assets/styles/variables' as *;
-@use 'src/assets/styles/fonts' as *;
+@use 'src/assets/styles/kanji-tile';
+
+// ---------------------------------------------------------------------------
+// Angular Material theme, pinned to the DESIGN.md palette.
+// The base palette only seeds Material; every visible color is overridden.
+// ---------------------------------------------------------------------------
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$orange-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Inter',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: #1c1c1c,
+      on-primary: #fcfbf8,
+      primary-container: #eceae4,
+      on-primary-container: #1c1c1c,
+      secondary: #1c1c1c,
+      on-secondary: #fcfbf8,
+      secondary-container: #1c1c1c,
+      on-secondary-container: #fcfbf8,
+      tertiary: #5f5f5d,
+      background: #f7f4ed,
+      on-background: #1c1c1c,
+      surface: #f7f4ed,
+      on-surface: #1c1c1c,
+      on-surface-variant: #5f5f5d,
+      surface-variant: #eceae4,
+      surface-bright: #fcfbf8,
+      surface-dim: #eceae4,
+      surface-container-lowest: #fcfbf8,
+      surface-container-low: #f7f4ed,
+      surface-container: #f7f4ed,
+      surface-container-high: #f2efe7,
+      surface-container-highest: #eceae4,
+      inverse-surface: #1c1c1c,
+      inverse-on-surface: #fcfbf8,
+      outline: rgba(28, 28, 28, 0.4),
+      outline-variant: #eceae4,
+      error: #b42318,
+      on-error: #fcfbf8,
+    )
+  );
+
+  // Buttons: 6px rectangles; filled = Primary Dark, outlined = Ghost.
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 6px,
+      filled-container-color: #1c1c1c,
+      filled-label-text-color: #fcfbf8,
+      filled-horizontal-padding: 16px,
+      filled-container-height: 40px,
+      filled-label-text-weight: 400,
+      filled-label-text-size: 16px,
+      filled-label-text-tracking: normal,
+      outlined-container-shape: 6px,
+      outlined-outline-color: rgba(28, 28, 28, 0.4),
+      outlined-label-text-color: #1c1c1c,
+      outlined-horizontal-padding: 16px,
+      outlined-container-height: 40px,
+      outlined-label-text-weight: 400,
+      outlined-label-text-size: 16px,
+      outlined-label-text-tracking: normal,
+      text-container-shape: 6px,
+      text-label-text-color: #1c1c1c,
+      text-label-text-weight: 400,
+      text-label-text-tracking: normal,
+      protected-container-shape: 6px,
+    )
+  );
+
+  // Icon buttons: full pill.
+  @include mat.icon-button-overrides(
+    (
+      icon-color: #1c1c1c,
+      container-shape: 9999px,
+    )
+  );
+
+  @include mat.chips-overrides(
+    (
+      container-shape-radius: 9999px,
+      outline-color: #eceae4,
+      label-text-color: #1c1c1c,
+      label-text-weight: 400,
+      selected-label-text-color: #fcfbf8,
+      with-icon-selected-icon-color: #fcfbf8,
+      elevated-selected-container-color: #1c1c1c,
+      focus-outline-color: rgba(28, 28, 28, 0.4),
+    )
+  );
+
+  @include mat.card-overrides(
+    (
+      outlined-container-color: #f7f4ed,
+      outlined-outline-color: #eceae4,
+      outlined-container-shape: 12px,
+      outlined-container-elevation: none,
+      title-text-size: 20px,
+      title-text-weight: 400,
+      title-text-line-height: 1.25,
+      subtitle-text-color: #5f5f5d,
+      subtitle-text-size: 14px,
+      subtitle-text-weight: 400,
+    )
+  );
+
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 6px,
+      outlined-outline-color: #eceae4,
+      outlined-hover-outline-color: rgba(28, 28, 28, 0.4),
+      outlined-focus-outline-color: rgba(59, 130, 246, 0.5),
+      outlined-focus-outline-width: 2px,
+      outlined-focus-label-text-color: #1c1c1c,
+      outlined-label-text-color: #5f5f5d,
+      outlined-input-text-placeholder-color: #5f5f5d,
+      outlined-caret-color: #1c1c1c,
+    )
+  );
+
+  @include mat.select-overrides(
+    (
+      panel-background-color: #f7f4ed,
+      focused-arrow-color: #1c1c1c,
+    )
+  );
+
+  @include mat.tabs-overrides(
+    (
+      active-indicator-color: #1c1c1c,
+      active-focus-indicator-color: #1c1c1c,
+      active-hover-indicator-color: #1c1c1c,
+      active-label-text-color: #1c1c1c,
+      active-focus-label-text-color: #1c1c1c,
+      active-hover-label-text-color: #1c1c1c,
+      inactive-label-text-color: #5f5f5d,
+      divider-color: #eceae4,
+      label-text-weight: 400,
+      label-text-tracking: normal,
+    )
+  );
+
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-color: #1c1c1c,
+      track-color: #eceae4,
+      track-shape: 9999px,
+    )
+  );
+
+  @include mat.tooltip-overrides(
+    (
+      container-color: #1c1c1c,
+      supporting-text-color: #fcfbf8,
+      container-shape: 6px,
+      supporting-text-size: 13px,
+    )
+  );
+
+  @include mat.list-overrides(
+    (
+      list-item-container-color: transparent,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Base
+// ---------------------------------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
-  font-family: 'Source Sans 3', 'Noto Sans ', sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: $background-color;
+  font-family: var(--km-font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--km-charcoal);
+  background-color: var(--km-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  text-decoration: none;
+[lang='ja'] {
+  font-family: var(--km-font-ja);
 }
 
+// Typography scale (DESIGN.md §3). Max weight is 600.
 h1,
 h2,
 h3,
 h4,
 h5,
-h6,
-h7 {
-  font-family: 'Source Sans 3', 'Noto Sans ', sans-serif;
+h6 {
+  margin: 0;
+  color: var(--km-charcoal);
+  font-weight: 600;
 }
 
+.display {
+  font-size: 60px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  font-weight: 600;
+}
+
+h1,
+.heading-1 {
+  font-size: 48px;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+}
+
+h2,
+.heading-2 {
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.9px;
+}
+
+h3,
+.card-title {
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 400;
+}
+
+h4,
+.eyebrow {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--km-muted);
+}
+
+@include below(lg) {
+  .display {
+    font-size: 48px;
+    letter-spacing: -1.2px;
+  }
+}
+
+@include below(md) {
+  .display,
+  h1,
+  .heading-1 {
+    font-size: 36px;
+    letter-spacing: -0.9px;
+  }
+
+  h2,
+  .heading-2 {
+    font-size: 28px;
+    letter-spacing: -0.6px;
+  }
+}
+
+.body-lg {
+  font-size: 18px;
+  line-height: 1.38;
+}
+
+.caption {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--km-muted);
+}
+
+p {
+  margin: 0;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+a {
+  color: var(--km-charcoal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
 main {
-  max-width: 80vw;
-  min-height: calc(100vh - 3 * $section-height);
-  padding: 20px;
-  margin: 0 auto $section-height auto;
+  max-width: $content-max;
+  min-height: calc(100vh - 64px);
+  margin: 0 auto;
+  padding: var(--km-space-7) var(--km-space-6) var(--km-space-8);
+
+  @include below(md) {
+    padding: var(--km-space-5) var(--km-space-3) var(--km-space-7);
+  }
 }
 
-.regular-tooltip {
-  font-size: 12px;
-}
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--km-space-3);
+  margin-bottom: var(--km-space-6);
 
-// Updated
-.dropped-background:hover .mat-mdc-button-persistent-ripple::before {
-  opacity: 0 !important;
-}
-
-.kanji-attributes {
-  .mdc-evolution-chip-set__chips {
+  .page-header-text {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1em;
+    flex-direction: column;
+    gap: var(--km-space-2);
+    max-width: 720px;
+  }
+
+  .page-subtitle {
+    font-size: 18px;
+    line-height: 1.38;
+    color: var(--km-muted);
+  }
+
+  @include below(md) {
+    margin-bottom: var(--km-space-5);
   }
 }
 
-.youtube-player-host {
-  width: 100%;
-  height: 100%;
+// Bordered surface: the containment primitive (no shadows).
+.surface-card {
+  background: var(--km-cream);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-lg);
+  padding: var(--km-space-4);
 
-  iframe {
-    border-radius: 15px;
+  @include below(md) {
+    padding: var(--km-space-3);
   }
 }
 
+.pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--km-charcoal);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-pill);
+  background: var(--km-cream);
+}
+
+// ---------------------------------------------------------------------------
+// Feedback states
+// ---------------------------------------------------------------------------
 .page-progress {
-  margin-top: 1em;
+  margin-top: var(--km-space-3);
 }
 
 .load-error {
-  margin-top: 1em;
-  color: #b00020;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--km-space-2);
+  margin-top: var(--km-space-3);
+  padding: var(--km-space-3);
+  font-size: 14px;
+  color: var(--km-error);
   text-align: center;
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-md);
+}
+
+// ---------------------------------------------------------------------------
+// Material refinements that tokens can't express
+// ---------------------------------------------------------------------------
+.mat-mdc-unelevated-button:not(:disabled) {
+  box-shadow: var(--km-shadow-inset);
+}
+
+.mat-mdc-icon-button:not(:disabled) {
+  background: var(--km-cream);
+  box-shadow: var(--km-shadow-inset);
+}
+
+.mat-mdc-button-base:active {
+  opacity: 0.8;
+}
+
+.mat-mdc-button-base.cdk-keyboard-focused {
+  box-shadow: var(--km-shadow-focus);
+}
+
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel {
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-md) !important;
+  box-shadow: var(--km-shadow-focus) !important;
+}
+
+.mat-mdc-chip.mat-mdc-standard-chip:not(.mdc-evolution-chip--selected) {
+  background: transparent;
+}
+
+.mat-mdc-form-field {
+  font-family: var(--km-font-sans);
+}
+
+// Chip rows used as attribute/filter lists.
+.kanji-attributes .mdc-evolution-chip-set__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--km-space-1);
+
+  @include below(md) {
+    .kanji-hero & {
+      justify-content: center;
+    }
+  }
+}
+
+// The YouTube IFrame API mounts its iframe inside this host.
+.youtube-player-host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-lg);
+
+  iframe {
+    display: block;
+    border: 0;
+  }
 }

@@ -1,15 +1,16 @@
 @if (kanji.hasValue()) {
   @let info = kanji.value();
-  <div class="kanji-container">
-    <div class="kanji-card">
-      <div class="kanji-header">
-        <div class="kanji-with-drawing">
-          <h1 lang="ja">{{ info.kanji }}</h1>
-          @if (kanjiSvg.hasValue() && kanjiSvg.value()) {
-            <app-kanji-drawing [kanjiSvgContent]="kanjiSvg.value()" />
-          }
-        </div>
-        <h3>{{ info.heisigEn }}</h3>
+  <article class="kanji-detail">
+    <header class="kanji-hero surface-card">
+      <div class="kanji-glyphs">
+        <h1 class="kanji-glyph" lang="ja">{{ info.kanji }}</h1>
+        @if (kanjiSvg.hasValue() && kanjiSvg.value()) {
+          <app-kanji-drawing [kanjiSvgContent]="kanjiSvg.value()" />
+        }
+      </div>
+      <div class="kanji-summary">
+        <p class="eyebrow">Значення (Heisig)</p>
+        <h2>{{ info.heisigEn }}</h2>
         <mat-chip-listbox [selectable]="false" class="kanji-attributes">
           <mat-chip-option
             [matTooltip]="info.gradeTooltip"
@@ -29,69 +30,71 @@
           }
         </mat-chip-listbox>
       </div>
+    </header>
 
-      <div class="kanji-details">
-        @if (info.extraMeanings.length) {
-          <div class="kanji-section">
-            <h4>Значення</h4>
-            <ul>
-              @for (meaning of info.extraMeanings; track $index) {
-                <li>{{ meaning }}</li>
-              }
-            </ul>
-          </div>
-        }
-        @if (info.kunyomi) {
-          <ng-container
-            *ngTemplateOutlet="
-              reading;
-              context: { title: 'Кун Читання', readings: info.kunyomi }
-            "
-          />
-        }
-        @if (info.onyomi) {
-          <ng-container
-            *ngTemplateOutlet="
-              reading;
-              context: { title: 'Он Читання', readings: info.onyomi }
-            "
-          />
-        }
-        @if (info.nanori) {
-          <ng-container
-            *ngTemplateOutlet="
-              reading;
-              context: { title: 'Наорі', readings: info.nanori }
-            "
-          />
-        }
-        @if (info.shortWordList.length) {
-          <div class="kanji-section full-width">
-            <h4>Приклади слів</h4>
-            <ul>
-              @for (word of info.shortWordList; track word.word) {
-                <li>
-                  <span lang="ja">{{ word.word }}</span>
-                  <small lang="ja">({{ word.yomiDisplay }})</small>
-                  {{ word.translation }}
-                </li>
-              }
-            </ul>
-          </div>
-        }
-        <ng-template #reading let-title="title" let-readings="readings">
-          <div class="kanji-section">
-            <h4>{{ title }}</h4>
-            <ul lang="ja">
-              @for (item of readings.split('、'); track $index) {
-                <li>{{ item }}</li>
-              }
-            </ul>
-          </div>
-        </ng-template>
-      </div>
+    <div class="kanji-details">
+      @if (info.extraMeanings.length) {
+        <section class="kanji-section surface-card">
+          <h3>Значення</h3>
+          <ul class="tag-list">
+            @for (meaning of info.extraMeanings; track $index) {
+              <li class="pill-tag">{{ meaning }}</li>
+            }
+          </ul>
+        </section>
+      }
+      @if (info.kunyomi) {
+        <ng-container
+          *ngTemplateOutlet="
+            reading;
+            context: { title: 'Кун Читання', readings: info.kunyomi }
+          "
+        />
+      }
+      @if (info.onyomi) {
+        <ng-container
+          *ngTemplateOutlet="
+            reading;
+            context: { title: 'Он Читання', readings: info.onyomi }
+          "
+        />
+      }
+      @if (info.nanori) {
+        <ng-container
+          *ngTemplateOutlet="
+            reading;
+            context: { title: 'Наорі', readings: info.nanori }
+          "
+        />
+      }
+      @if (info.shortWordList.length) {
+        <section class="kanji-section surface-card full-width">
+          <h3>Приклади слів</h3>
+          <ul class="word-list">
+            @for (word of info.shortWordList; track word.word) {
+              <li class="word-row">
+                <span class="word" lang="ja">{{ word.word }}</span>
+                <span class="word-yomi caption" lang="ja">{{
+                  word.yomiDisplay
+                }}</span>
+                <span class="word-translation">{{ word.translation }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+      <ng-template #reading let-title="title" let-readings="readings">
+        <section class="kanji-section surface-card">
+          <h3>{{ title }}</h3>
+          <ul class="tag-list" lang="ja">
+            @for (item of readings.split('、'); track $index) {
+              <li class="pill-tag">{{ item }}</li>
+            }
+          </ul>
+        </section>
+      </ng-template>
     </div>
-  </div>
+  </article>
 } @else if (kanji.error()) {
   <p class="load-error" role="alert">
     Не вдалося завантажити канджі. Спробуйте пізніше.
