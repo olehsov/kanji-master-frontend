@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { GrammarTopicComponent } from './grammar-topic.component';
 import { TopicService } from '../../services/topic.service';
@@ -20,7 +21,10 @@ describe('GrammarTopicComponent', () => {
       of(lesson),
     );
     TestBed.configureTestingModule({
-      providers: [{ provide: TopicService, useValue: { getGrammarTopic } }],
+      providers: [
+        provideRouter([]),
+        { provide: TopicService, useValue: { getGrammarTopic } },
+      ],
     });
     const fixture = TestBed.createComponent(GrammarTopicComponent);
     fixture.componentRef.setInput('id', '7');
@@ -44,7 +48,7 @@ describe('GrammarTopicComponent', () => {
     await fixture.whenStable();
 
     expect(getGrammarTopic).toHaveBeenLastCalledWith(7, []);
-    expect(element.querySelector('h3')?.textContent).toContain('て-форма');
+    expect(element.querySelector('h1')?.textContent).toContain('て-форма');
     expect(element.querySelector('.example-item')).not.toBeNull();
     expect(element.querySelector('mat-tab-group')).toBeNull();
     expect(element.querySelector('.no-tasks')).not.toBeNull();

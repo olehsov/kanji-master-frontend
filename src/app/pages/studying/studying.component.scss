@@ -1,6 +1,33 @@
 .studying-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--km-space-4);
+
+  > .page-progress,
+  > .load-error {
+    grid-column: 1 / -1;
+  }
+}
+
+.topic-card {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 1em;
+  padding: var(--km-space-1);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--km-border-control);
+  }
+
+  height: 100%;
+
+  mat-card-subtitle {
+    margin-top: var(--km-space-1);
+  }
+
+  // Pin the action to the bottom so buttons line up across a row.
+  mat-card-actions {
+    margin-top: auto;
+    padding: var(--km-space-3);
+  }
 }

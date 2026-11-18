@@ -1,4 +1,9 @@
-$section-height: 100px;
-$bar-color: #333;
-$table-color: #e5e7eb7d;
-$background-color: #f1f1f5;
+// SCSS-only values (media queries can't use CSS custom properties).
+$content-max: 1200px;
+
+$breakpoints: (
+  sm: 600px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);

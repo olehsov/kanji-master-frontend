@@ -1,1 +1,23 @@
-@use "variables" as *;
+@use 'sass:map';
+@use 'variables' as *;
+
+/// Styles for viewports narrower than the breakpoint (mobile-first collapse).
+@mixin below($name) {
+  @media (max-width: #{map.get($breakpoints, $name) - 0.02px}) {
+    @content;
+  }
+}
+
+/// Styles for viewports at least as wide as the breakpoint.
+@mixin above($name) {
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+/// Keyboard focus indicator: 2px charcoal ring (offset) + soft glow.
+/// Visible on every surface; required for WCAG 2.4.7.
+@mixin focus-ring {
+  outline: none;
+  box-shadow: var(--km-focus-ring);
+}

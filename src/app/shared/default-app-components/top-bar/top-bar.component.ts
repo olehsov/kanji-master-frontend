@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
@@ -14,10 +14,13 @@ interface MenuItem {
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage, MatButton, RouterLinkActive, RouterLink],
+  imports: [NgOptimizedImage, MatIcon, RouterLinkActive, RouterLink],
+  host: { '(document:keydown.escape)': 'closeMenu()' },
 })
 export class TopBarComponent {
   protected readonly logoPath = environment.logoPath;
+  /** Mobile (< 768px) navigation panel state. */
+  protected readonly menuOpen = signal(false);
   protected readonly menuItems: MenuItem[] = [
     { label: 'Канджі', routerLink: '/kanji' },
     { label: 'Навчання', routerLink: '/studying' },
@@ -27,4 +30,8 @@ export class TopBarComponent {
       routerLink: '/search-kanji-by-radical',
     },
   ];
+
+  protected closeMenu(): void {
+    this.menuOpen.set(false);
+  }
 }

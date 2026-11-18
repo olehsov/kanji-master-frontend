@@ -1,0 +1,92 @@
+// Grid of clickable kanji tiles (kanji list and radical search results).
+@use 'mixins' as *;
+
+.kanji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: var(--km-space-3);
+
+  @include below(sm) {
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: var(--km-space-2);
+  }
+
+  &.compact {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: var(--km-space-1);
+
+    .kanji-card {
+      font-size: 36px;
+    }
+  }
+
+  > .page-progress,
+  > .load-error,
+  > .grid-empty {
+    grid-column: 1 / -1;
+  }
+}
+
+.kanji-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  aspect-ratio: 1;
+  padding: var(--km-space-1);
+  overflow: hidden;
+  color: var(--km-charcoal);
+  text-decoration: none;
+  font-family: var(--km-font-ja);
+  font-size: 56px;
+  line-height: 1;
+  background: var(--km-surface);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-lg);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--km-border-control);
+    background: var(--km-cream);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  @include below(sm) {
+    font-size: 40px;
+  }
+}
+
+.kanji-card-meaning {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--km-font-sans);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--km-muted);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kanji-card-badge {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: var(--km-font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--km-muted);
+}

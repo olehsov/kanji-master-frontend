@@ -1,15 +1,29 @@
-<section class="kanji-container">
-  @if (groupedRadicals(); as radicals) {
-    <div class="list-box-container">
-      <button
-        mat-icon-button
-        type="button"
-        class="clear-button"
-        aria-label="Скинути вибрані радикали"
-        (click)="onSettingReset()"
-      >
-        <mat-icon>settings_backup_restore</mat-icon>
-      </button>
+<header class="page-header">
+  <div class="page-header-text">
+    <h1>Пошук за радикалами</h1>
+    <p class="page-subtitle">
+      Оберіть складові ієрогліфа: список канджі звузиться до тих, що містять усі
+      вибрані радикали.
+    </p>
+  </div>
+</header>
+
+@if (groupedRadicals(); as radicals) {
+  <div class="radical-layout">
+    <section class="radical-picker surface-card" aria-labelledby="picker-title">
+      <div class="panel-heading">
+        <h2 id="picker-title" class="panel-title">Радикали</h2>
+        <button
+          mat-stroked-button
+          type="button"
+          class="clear-button"
+          [disabled]="!selected().length"
+          (click)="onSettingReset()"
+        >
+          <mat-icon aria-hidden="true">settings_backup_restore</mat-icon>
+          Скинути вибір
+        </button>
+      </div>
       <ul
         cdkListbox
         cdkListboxMultiple
@@ -18,13 +32,13 @@
         class="list-box"
       >
         @for (group of radicals | keyvalue: sortNumericKeys; track group.key) {
-          <div class="stroke-list-box" role="group">
-            <li
-              class="list-box-option stroke-count"
-              role="presentation"
-              aria-disabled="true"
-            >
-              <span>{{ group.key }}</span>
+          <div
+            class="stroke-list-box"
+            role="group"
+            [attr.aria-label]="'Рисок: ' + group.key"
+          >
+            <li class="stroke-count" role="presentation" aria-hidden="true">
+              {{ group.key }}
             </li>
             @for (radical of group.value; track radical.label) {
               <li
@@ -33,31 +47,77 @@
                 class="list-box-option"
                 lang="ja"
               >
-                <span>{{ radical.label }}</span>
+                {{ radical.label }}
               </li>
             }
           </div>
         }
       </ul>
-    </div>
+    </section>
 
-    @if (kanjies.isLoading()) {
-      <mat-progress-bar class="page-progress" mode="indeterminate" />
-    } @else if (kanjies.error()) {
-      <p class="load-error" role="alert">Не вдалося знайти канджі.</p>
-    } @else {
-      @for (
-        item of kanjies.hasValue() ? kanjies.value() : [];
-        track item.kanji
-      ) {
-        <a class="kanji-card" lang="ja" [routerLink]="['/kanji', item.kanji]">
-          {{ item.kanji }}
-        </a>
+    <aside
+      id="radical-results"
+      class="radical-results surface-card"
+      aria-labelledby="results-title"
+    >
+      <div class="panel-heading">
+        <h2 id="results-title" class="panel-title">Результати</h2>
+        @if (kanjies.hasValue()) {
+          <span class="result-count" aria-live="polite">
+            Знайдено: {{ kanjies.value().length }}
+          </span>
+        }
+      </div>
+
+      @if (selected().length) {
+        <p class="selected-row">
+          <span class="caption">Вибрано:</span>
+          @for (radical of selected(); track radical.radical) {
+            <span class="selected-radical" lang="ja">{{
+              radical.radical
+            }}</span>
+          }
+        </p>
       }
-    }
-  } @else if (radicalsError()) {
-    <p class="load-error" role="alert">Не вдалося завантажити радикали.</p>
-  } @else {
-    <mat-progress-bar class="page-progress" mode="indeterminate" />
+
+      <div class="kanji-grid compact results">
+        @if (kanjies.isLoading()) {
+          <mat-progress-bar class="page-progress" mode="indeterminate" />
+        } @else if (kanjies.error()) {
+          <p class="load-error" role="alert">Не вдалося знайти канджі.</p>
+        } @else if (resultTiles(); as tiles) {
+          @for (tile of tiles; track tile.kanji) {
+            <a
+              class="kanji-card"
+              [routerLink]="['/kanji', tile.kanji]"
+              [attr.aria-label]="tile.label"
+              [matTooltip]="tile.meaning"
+              matTooltipPosition="above"
+            >
+              <span lang="ja">{{ tile.kanji }}</span>
+            </a>
+          } @empty {
+            <p class="grid-empty caption">
+              Немає канджі з усіма вибраними радикалами.
+            </p>
+          }
+        } @else {
+          <p class="grid-empty caption">
+            Оберіть один або кілька радикалів ліворуч.
+          </p>
+        }
+      </div>
+    </aside>
+  </div>
+
+  @if (kanjies.hasValue()) {
+    <a class="mobile-results-bar" href="#radical-results">
+      Знайдено: {{ kanjies.value().length }}
+      <span>До результатів ↓</span>
+    </a>
   }
-</section>
+} @else if (radicalsError()) {
+  <p class="load-error" role="alert">Не вдалося завантажити радикали.</p>
+} @else {
+  <mat-progress-bar class="page-progress" mode="indeterminate" />
+}

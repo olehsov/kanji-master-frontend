@@ -1,9 +1,19 @@
-<button
-  #drawingContainer
-  type="button"
-  (click)="runAnimation()"
-  class="drawing-container"
-  aria-label="Показати порядок рисок"
-  matTooltip="Натисніть, щоб побачити написання ієрогліфа"
-  matTooltipPosition="above"
-></button>
+<figure class="drawing">
+  <div
+    #drawingContainer
+    class="drawing-canvas"
+    role="img"
+    [attr.aria-label]="'Порядок рисок ієрогліфа ' + kanji()"
+  ></div>
+  <figcaption class="drawing-caption">
+    <button
+      mat-stroked-button
+      type="button"
+      class="play-button"
+      (click)="runAnimation()"
+    >
+      <mat-icon aria-hidden="true">play_arrow</mat-icon>
+      Порядок рисок
+    </button>
+  </figcaption>
+</figure>

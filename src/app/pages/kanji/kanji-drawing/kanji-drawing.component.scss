@@ -1,7 +1,34 @@
-.drawing-container {
-  max-width: fit-content;
-  cursor: pointer;
-  background: none;
-  border: 0;
-  padding: 0;
+.drawing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--km-space-2);
+  margin: 0;
+}
+
+// Same square as the font glyph panel so both kanji line up.
+.drawing-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--kanji-panel-size, 180px);
+  aspect-ratio: 1;
+  background: var(--km-cream);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-lg);
+}
+
+.drawing-caption {
+  display: flex;
+  min-height: 40px;
+}
+
+.play-button {
+  width: 100%;
+  padding: 0 var(--km-space-1);
+  font-size: 14px;
+  white-space: nowrap;
+
+  mat-icon {
+    margin-right: 2px;
+  }
 }

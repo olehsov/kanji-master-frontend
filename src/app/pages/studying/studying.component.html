@@ -1,12 +1,29 @@
+<header class="page-header">
+  <div class="page-header-text">
+    <h1>Навчання</h1>
+    <p class="page-subtitle">
+      Граматичні теми з поясненнями, прикладами та згенерованими вправами.
+    </p>
+  </div>
+</header>
+
 <div class="studying-cards">
   @for (topic of topics.hasValue() ? topics.value() : []; track topic.id) {
-    <mat-card appearance="outlined">
+    <mat-card appearance="outlined" class="topic-card">
       <mat-card-header>
-        <mat-card-title>{{ topic.header }}</mat-card-title>
+        <mat-card-title [id]="'topic-' + topic.id">{{
+          topic.header
+        }}</mat-card-title>
         <mat-card-subtitle>{{ topic.description }}</mat-card-subtitle>
       </mat-card-header>
-      <mat-card-actions align="end">
-        <a mat-button [routerLink]="topic.id">Вчити більше</a>
+      <mat-card-actions>
+        <a
+          mat-stroked-button
+          [routerLink]="topic.id"
+          [attr.aria-describedby]="'topic-' + topic.id"
+        >
+          Вчити більше
+        </a>
       </mat-card-actions>
     </mat-card>
   }

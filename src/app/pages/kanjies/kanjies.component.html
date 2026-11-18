@@ -1,32 +1,53 @@
-<div [formGroup]="form" class="kanji-filter">
-  <h2 class="section-header">Канджі</h2>
+<header class="page-header">
+  <div class="page-header-text">
+    <h1>Канджі</h1>
+    <p class="page-subtitle">
+      Шукайте ієрогліфи за читанням чи значенням, фільтруйте за шкільним рівнем
+      і JLPT.
+    </p>
+  </div>
+</header>
 
-  <mat-form-field>
-    <mat-label>Японська та Ромаджі</mat-label>
-    <input formControlName="search" matInput placeholder="hito or 人" />
-  </mat-form-field>
+<section
+  [formGroup]="form"
+  class="kanji-filter surface-card"
+  aria-label="Фільтри"
+>
+  <div class="filter-fields">
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="search-field"
+    >
+      <mat-label>Японська та Ромаджі</mat-label>
+      <input formControlName="search" matInput placeholder="hito or 人" />
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Рівень</mat-label>
-    <mat-select [multiple]="true" formControlName="grade">
-      @for (grade of grades; track grade) {
-        <mat-option [value]="grade">{{ grade }}</mat-option>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Рівень</mat-label>
+      <mat-select [multiple]="true" formControlName="grade">
+        @for (grade of grades; track grade) {
+          <mat-option [value]="grade">{{ grade }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="jlpt-row">
+    <span class="eyebrow" id="jlpt-label">JLPT</span>
+    <mat-chip-listbox
+      class="kanji-attributes"
+      [multiple]="true"
+      formControlName="jlpt"
+      aria-labelledby="jlpt-label"
+    >
+      @for (jlptOption of jlpt; track jlptOption.value) {
+        <mat-chip-option [value]="jlptOption.label">{{
+          jlptOption.value
+        }}</mat-chip-option>
       }
-    </mat-select>
-  </mat-form-field>
-
-  <mat-chip-listbox
-    class="kanji-attributes"
-    [multiple]="true"
-    formControlName="jlpt"
-    aria-label="Рівень JLPT"
-  >
-    @for (jlptOption of jlpt; track jlptOption.value) {
-      <mat-chip-option [value]="jlptOption.label">{{
-        jlptOption.value
-      }}</mat-chip-option>
-    }
-  </mat-chip-listbox>
+    </mat-chip-listbox>
+  </div>
 
   <div class="pdf-download">
     <!-- The wrapper carries the tooltip: a disabled button gets no hover events. -->
@@ -41,7 +62,7 @@
         [disabled]="!hasFilter() || pdfDownloading()"
         (click)="downloadPdf()"
       >
-        <mat-icon>{{
+        <mat-icon aria-hidden="true">{{
           pdfDownloading() ? 'hourglass_empty' : 'picture_as_pdf'
         }}</mat-icon>
         {{ pdfDownloading() ? 'Готуємо PDF…' : 'Завантажити PDF' }}
@@ -54,13 +75,31 @@
       <p class="pdf-download-message" role="status">{{ message }}</p>
     }
   </div>
-</div>
+</section>
 
-<section class="kanji-container">
-  @for (item of kanjies(); track item.kanji) {
-    <a class="kanji-card" lang="ja" [routerLink]="['/kanji', item.kanji]">
-      {{ item.kanji }}
+<section class="kanji-grid" aria-label="Список канджі">
+  @for (tile of tiles(); track tile.kanji) {
+    <a
+      class="kanji-card"
+      [routerLink]="['/kanji', tile.kanji]"
+      [attr.aria-label]="tile.label"
+    >
+      @if (tile.jlpt) {
+        <span class="kanji-card-badge" aria-hidden="true">{{ tile.jlpt }}</span>
+      }
+      <span lang="ja">{{ tile.kanji }}</span>
+      @if (tile.meaning) {
+        <span class="kanji-card-meaning" aria-hidden="true">{{
+          tile.meaning
+        }}</span>
+      }
     </a>
+  } @empty {
+    @if (!loading() && !error()) {
+      <p class="grid-empty caption">
+        Нічого не знайдено. Спробуйте змінити фільтри.
+      </p>
+    }
   }
 
   @if (loading()) {
@@ -69,7 +108,9 @@
   @if (error()) {
     <p class="load-error" role="alert">
       Не вдалося завантажити канджі.
-      <button type="button" (click)="loadFirstPage()">Спробувати ще раз</button>
+      <button mat-stroked-button type="button" (click)="loadFirstPage()">
+        Спробувати ще раз
+      </button>
     </p>
   }
 </section>

@@ -28,7 +28,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { KanjiService } from '../../services/kanji.service';
-import { KanjiDto } from '../../model/kanji-info.model';
+import { KanjiDto, toKanjiTile } from '../../model/kanji-info.model';
 import { KanjiFilter } from '../../interfaces/kanji-filter';
 import { GRADE_ITEMS, JLPT_ITEMS } from './consts/form-filter.const';
 
@@ -84,6 +84,7 @@ export class KanjiesComponent {
   });
 
   protected readonly kanjies = signal<KanjiDto[]>([]);
+  protected readonly tiles = computed(() => this.kanjies().map(toKanjiTile));
   protected readonly loading = signal(false);
   protected readonly error = signal(false);
   private readonly last = signal(false);

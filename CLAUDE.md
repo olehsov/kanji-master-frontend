@@ -53,7 +53,14 @@ Before finishing any change, run `npm run build`, `npm run lint` and `npx ng tes
 - **Style**: Prettier (single quotes, 2 spaces, width 80). No `console.log` (lint allows `console.error`/`warn`). SCSS uses `@use … as *`, never `@import`. Keep `*.component.ts` file naming (don't mass-rename).
 - **Tests**: Vitest + TestBed, zoneless "act → `await fixture.whenStable()` → assert". Fake services with `{ provide: X, useValue: … }`. Put pure logic in exported functions and unit-test them.
 
+## Design system
+`DESIGN.md` is the source of truth (warm cream `#f7f4ed` page, charcoal `#1c1c1c` text, `#eceae4` borders instead of shadows).
+- Tokens: CSS custom properties `--km-*` in `src/assets/styles/_tokens.scss` (colors, shadows, radii, spacing, fonts). Use `var(--km-*)` in component SCSS, never raw hex. Breakpoints: `below(md)` / `above(md)` mixins in `src/assets/styles/mixins.scss`.
+- Angular Material is themed in `src/styles.scss` (`mat.theme` + `mat.theme-overrides` + `mat.*-overrides`). Button roles: `mat-flat-button` = primary dark, `mat-stroked-button` = ghost/secondary, `mat-icon-button` = pill. No prebuilt theme. Form fields: `appearance="outline"` on each `mat-form-field` (not a global provider — that pulls form-field into the initial bundle).
+- Shared classes in `styles.scss`: `.page-header` (+ `.page-header-text`, `.page-subtitle`), `.surface-card`, `.pill-tag`, `.caption`, `.eyebrow`, `.load-error`, `.page-progress`. Kanji tiles: `.kanji-grid` + `.kanji-card` (global, from `src/assets/styles/_kanji-tile.scss`).
+- Fonts: Inter (UI, stand-in for Camera Plain) and Noto Sans JP (applied by `[lang='ja']`). Weights 400/600 only (no 700), no card box-shadows, pill radius only for icon buttons/tags.
+
 ## Known issues / TODO
 - **SECURITY: the Spotify client secret is hardcoded** in `services/spotify.service.ts` and is in git history (commit `15773e14`). Plan: move the client-credentials token exchange to `kanji-master-backend` (e.g. `GET /api/spotify/token`), call that from the frontend, delete the secret here, and **rotate it** in the Spotify dashboard. Don't use `SpotifyService` in new code until then.
 - WIP features, kept on purpose: `UploadedVideoPreviewComponent` (placeholder), Spotify subtitle sync (`SpotifyService` is not wired up), `SentenceByKanjiComponent` (not used on any page).
-- Initial bundle is ~640 kB (Material + Apollo). The budget warning is at 750 kB.
+- Initial bundle is ~500 kB (Material + Apollo, no prebuilt theme). The budget warning is at 750 kB.

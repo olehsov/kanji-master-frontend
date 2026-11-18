@@ -1,57 +1,52 @@
-@use 'src/assets/styles/kanji-card' as *;
-
-.kanji-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
+@use 'src/assets/styles/mixins' as *;
 
 .kanji-filter {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  margin-bottom: 1em;
+  gap: var(--km-space-3);
+  margin-bottom: var(--km-space-6);
+}
 
-  mat-form-field,
-  mat-button-toggle-group,
-  mat-button-toggle {
+.filter-fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--km-space-3);
+
+  mat-form-field {
     width: 100%;
   }
 
-  .section-header {
-    font-size: inherit;
-    font-weight: normal;
-    margin: 1em 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-
-    svg {
-      cursor: pointer;
-    }
+  @include below(md) {
+    grid-template-columns: 1fr;
   }
+}
 
-  input {
-    width: 100%;
-  }
+.jlpt-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--km-space-2);
+}
 
-  .pdf-download {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5em;
-    margin-top: 1em;
-  }
+// Footer row of the filter card: PDF export of the filtered list.
+.pdf-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--km-space-2) var(--km-space-3);
+  padding-top: var(--km-space-3);
+  border-top: 1px solid var(--km-border);
 
-  .pdf-download-progress {
-    width: 12em;
+  .pdf-download-button mat-icon {
+    margin-right: 6px;
   }
+}
 
-  .pdf-download-message {
-    margin: 0;
-    color: #c62828;
-    text-align: center;
-  }
+.pdf-download-progress {
+  width: 12em;
+}
+
+.pdf-download-message {
+  font-size: 14px;
+  color: var(--km-error);
 }

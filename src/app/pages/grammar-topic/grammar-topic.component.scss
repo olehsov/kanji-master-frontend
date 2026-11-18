@@ -1,81 +1,147 @@
+@use 'src/assets/styles/mixins' as *;
+
 .grammar-settings {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: 1em;
+  gap: var(--km-space-4);
+  margin-bottom: var(--km-space-6);
 
   .setting-values {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    align-items: center;
-
-    .type-range {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: var(--km-space-4);
   }
 
-  button.setting {
-    align-self: end;
+  .type-range {
+    display: flex;
+    flex-direction: column;
+    gap: var(--km-space-1);
+
+    mat-slider {
+      width: 100%;
+      margin: 0;
+    }
   }
 
   button.reset {
-    align-self: center;
+    align-self: flex-start;
   }
 }
 
-.grammar-topic {
-  h3 {
-    font-size: 1.8em;
+.topic-section {
+  margin-bottom: var(--km-space-7);
+
+  .section-title {
+    margin-bottom: var(--km-space-4);
+  }
+}
+
+.section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--km-space-2);
+  margin-bottom: var(--km-space-4);
+
+  .section-title {
+    margin-bottom: 0;
   }
 
-  h5 {
-    font-size: 1em;
+  .setting mat-icon {
+    margin-right: 6px;
   }
+}
 
-  .grammar-list-wrapping {
-    .example-list {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 100%;
-      gap: 10px;
+.example-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--km-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
-      .example-item {
-        flex: 1 1 auto;
-        width: calc(100% / 5);
-      }
-    }
+.example-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--km-space-1);
+}
 
-    .question-item {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: flex-end;
-      justify-content: center;
-      margin-top: 1em;
+.example-sentence {
+  font-size: 18px;
+  line-height: 1.5;
+}
 
-      .question-item-answer {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--km-space-2);
+  padding-top: var(--km-space-4);
+}
 
-        button {
-          margin: auto 0 auto 0;
-        }
+.question-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--km-space-4);
 
-        .answer {
-          align-self: center;
-        }
-      }
+  @include below(md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.question-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.question {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.question-item-answer {
+  display: flex;
+  align-items: center;
+  gap: var(--km-space-2);
+  flex-shrink: 0;
+
+  mat-form-field {
+    width: 220px;
+
+    @include below(md) {
+      flex: 1;
+      width: auto;
     }
   }
 }
 
+.result {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-pill);
+
+  &.correct {
+    color: var(--km-charcoal);
+  }
+
+  &.wrong {
+    color: var(--km-error);
+  }
+}
+
+// Shown when every exercise type is switched off in the settings.
 .no-tasks {
-  margin: 1em 0;
-  opacity: 0.8;
+  padding: var(--km-space-4);
+  color: var(--km-muted);
+  text-align: center;
+  border: 1px dashed var(--km-border-control);
+  border-radius: var(--km-radius-lg);
 }
